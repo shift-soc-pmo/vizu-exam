@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ויזואליזציה של מידע — סיכום, תרגול ומבחן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Assistant:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#f4f6fb; --bg2:#eef1f8; --panel:#ffffff; --panel2:#f7f9fd;
+  --line:#e2e7f0; --line2:#cfd7e6;
+  --ink:#1a2234; --ink-soft:#55617a; --drop:#8794ab;
+  --accent:#3a63d0; --accent-wash:#eaf0fc;
+  --flag:#c85a26; --flag-wash:#fbeee5;
+  --warn:#9a6b00; --warn-wash:#fbf3dd;
+  --ok:#1f8f68; --ok-wash:#e6f4ee;
+  --card:#ffffff; --rule:#e2e7f0;
+  /* categorical topic hues (like a Tableau legend) */
+  --t0:#0f9b8e; --t1:#3a63d0; --t2:#8b4fd6; --t3:#c77a12; --t4:#d0454f; --t5:#1f9d63;
+  --paper:#f4f6fb;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;background-color:#f4f6fb}
+html{color-scheme:light}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--ink);
+  font-family:'Assistant',system-ui,sans-serif;font-size:16.5px;line-height:1.72;
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(58,99,208,.06), transparent 60%),
+    radial-gradient(820px 460px at 6% 3%, rgba(139,79,214,.05), transparent 55%),
+    var(--bg);
+  min-height:100vh;
+  padding-bottom:5rem;
+}
+.wrap{max-width:840px;margin:0 auto;padding:0 1.15rem}
+.en,code{font-family:'IBM Plex Mono',monospace;font-size:.86em;
+  direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+code{background:#eef1f8;padding:.05em .32em;border-radius:3px;
+  border:1px solid var(--line);color:#2a3550}
+
+/* ---------- masthead ---------- */
+header{padding:2.6rem 0 1.4rem;position:relative}
+header::after{content:"";position:absolute;bottom:0;inset-inline:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line2),transparent)}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 .55rem}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:900;
+  font-size:clamp(2rem,6.2vw,3rem);line-height:1.1;margin:0 0 .5rem;
+  letter-spacing:-.015em;
+  background:linear-gradient(115deg,#1a2234 30%,#3a63d0);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tagline{margin:0;color:var(--ink-soft);font-size:1.02rem}
+.facts{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.1rem}
+.fact{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;
+  border:1px solid var(--line);background:var(--panel);padding:.32rem .68rem;
+  border-radius:999px;color:var(--ink-soft)}
+.fact.hot{border-color:rgba(240,134,58,.5);color:var(--flag);background:var(--flag-wash)}
+
+/* ---------- mode toggle ---------- */
+.modebar{position:sticky;top:0;z-index:40;
+  background:rgba(244,246,251,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding:.6rem 0}
+.modeinner{max-width:840px;margin:0 auto;padding:0 1.15rem;
+  display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:.2rem;gap:.2rem}
+.seg button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:600;
+  color:var(--ink-soft);background:none;border:none;cursor:pointer;
+  padding:.4rem .85rem;border-radius:7px;transition:.15s}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.spacer{flex:1}
+.scorepill{font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--ink);
+  padding:.3rem .62rem;border-radius:8px}
+.scorepill.good{border-color:var(--ok);color:var(--ok)}
+.pbar{flex-basis:120px;flex-grow:.3;height:6px;background:#e6eaf2;
+  border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.pbar span{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--accent),var(--ok));transition:width .35s}
+.ghost{font-family:'Assistant',sans-serif;font-size:.76rem;background:none;
+  border:1px solid var(--line);color:var(--drop);padding:.3rem .6rem;
+  border-radius:8px;cursor:pointer}
+.ghost:hover{border-color:var(--flag);color:var(--flag)}
+
+/* ---------- study: tabs ---------- */
+nav.tabs{display:flex;gap:.35rem;overflow-x:auto;padding:1rem 0 0;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:'Assistant',sans-serif;font-size:.86rem;font-weight:600;
+  white-space:nowrap;background:var(--panel);border:1px solid var(--line);
+  color:var(--ink-soft);padding:.5rem .85rem;border-radius:10px;cursor:pointer;
+  display:flex;align-items:center;gap:.5rem;transition:.15s;position:relative}
+.tab:hover{color:var(--ink);border-color:var(--line2)}
+.tab .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--panel2);border-color:var(--line2)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;inset-inline:.7rem;
+  bottom:-1px;height:2px;border-radius:2px;background:var(--tc,var(--accent))}
+.tab .n{font-family:'IBM Plex Mono',monospace;font-size:.64rem;
+  background:#eef1f8;color:var(--ink-soft);padding:.05rem .32rem;
+  border-radius:5px;font-weight:600}
+.tc0{--tc:var(--t0)}.tc1{--tc:var(--t1)}.tc2{--tc:var(--t2)}
+.tc3{--tc:var(--t3)}.tc4{--tc:var(--t4)}.tc5{--tc:var(--t5)}
+.tab.tc0 .dot{background:var(--t0)}.tab.tc1 .dot{background:var(--t1)}
+.tab.tc2 .dot{background:var(--t2)}.tab.tc3 .dot{background:var(--t3)}
+.tab.tc4 .dot{background:var(--t4)}.tab.tc5 .dot{background:var(--t5)}
+.tabline{height:1px;background:var(--line);margin-bottom:1.6rem}
+.panel[hidden]{display:none}
+
+/* ---------- part headers ---------- */
+.part{display:flex;align-items:center;gap:.7rem;margin:0 0 1.1rem;
+  padding-bottom:.55rem;border-bottom:1px solid var(--line)}
+.part .lbl{font-family:'IBM Plex Mono',monospace;font-size:.64rem;font-weight:600;
+  letter-spacing:.1em;padding:.22rem .55rem;border-radius:6px;white-space:nowrap;
+  background:var(--tc,var(--accent));color:#fff}
+.part.b .lbl{background:var(--flag);color:#fff}
+.part h2{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.4rem;
+  margin:0;border:none;padding:0;color:var(--ink)}
+.part.b{margin-top:2.8rem}
+.topline{margin:-.3rem 0 1.5rem;color:var(--ink-soft);font-size:.93rem}
+.topline b{color:var(--ink)}
+
+/* ---------- theory boxes (reused markup; restyled for dark) ---------- */
+h3{font-family:'Assistant',sans-serif;font-weight:700;font-size:1.08rem;
+  margin:1.9rem 0 .5rem;color:var(--ink)}
+h3.star::before{content:"★";color:var(--flag);margin-inline-end:.4rem;font-size:.9em}
+.wrap p{margin:.5rem 0}
+.wrap ul,.wrap ol{margin:.5rem 0;padding-inline-start:1.3rem}
+.wrap li{margin:.3rem 0}
+.wrap li::marker{color:var(--accent)}
+strong{font-weight:700;color:#0f1626}
+em{font-style:normal;background:linear-gradient(transparent 60%,rgba(91,141,239,.28) 0);padding:0 .1em}
+.box{border-inline-start:3px solid var(--accent);background:var(--panel);
+  padding:.85rem 1rem;margin:1rem 0;border-radius:0 10px 10px 0;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  border-inline-end:1px solid var(--line)}
+.box.must{border-inline-start-color:var(--flag);background:var(--flag-wash)}
+.box.trap{border-inline-start-color:var(--warn);background:var(--warn-wash)}
+.box.drop{border-inline-start-color:var(--drop);background:#f7f9fd;color:var(--ink-soft)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.box-label{font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:.35rem;color:var(--accent)}
+.must .box-label{color:var(--flag)}.trap .box-label{color:var(--warn)}.drop .box-label{color:var(--drop)}
+
+.scroll{overflow-x:auto;margin:1.1rem 0;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--panel)}
+th,td{border:1px solid var(--line);padding:.55rem .7rem;text-align:right;vertical-align:top;color:var(--ink)}
+thead th{background:var(--panel2);color:#0f1626;font-weight:600;font-size:.82rem;white-space:nowrap}
+tbody tr:nth-child(even){background:#fafbfe}
+td strong{color:var(--accent)}
+
+.flow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;background:var(--panel2);
+  border:1px solid var(--line);padding:.9rem;border-radius:10px;margin:1rem 0}
+.flow span{font-family:'IBM Plex Mono',monospace;font-size:.78rem;font-weight:600;
+  background:var(--accent-wash);color:#2a4aa0;padding:.32rem .55rem;border-radius:6px;direction:ltr}
+.flow i{color:var(--drop);font-style:normal;font-weight:700}
+
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:1rem 0}
+ol.steps li{counter-increment:s;position:relative;padding-inline-start:2.1rem;margin:.5rem 0}
+ol.steps li::before{content:counter(s);position:absolute;inset-inline-start:0;top:.15rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:600;
+  width:1.45rem;height:1.45rem;border-radius:50%;background:var(--accent);color:#fff;
+  display:grid;place-items:center}
+.check{list-style:none;padding:0;margin:1rem 0}
+.check li{padding:.55rem .8rem;margin:.3rem 0;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;display:flex;gap:.65rem;
+  align-items:flex-start;font-size:.95rem;min-width:0;overflow-wrap:anywhere}
+.check li::before{content:"";flex:0 0 auto;width:1rem;height:1rem;margin-top:.3rem;
+  border:1.5px solid var(--accent);border-radius:4px}
+
+/* ---------- questions ---------- */
+.q{background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line);border-radius:14px;padding:1.1rem 1.15rem;margin-bottom:1rem;
+  box-shadow:0 12px 30px -18px rgba(26,34,52,.18)}
+.q-top{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap}
+.q-num{font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;
+  color:var(--accent);letter-spacing:.08em}
+.lvl{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;
+  padding:.14rem .42rem;border-radius:5px}
+.lvl.easy{background:var(--ok-wash);color:var(--ok)}
+.lvl.mid{background:var(--warn-wash);color:var(--warn)}
+.lvl.hard{background:var(--flag-wash);color:var(--flag)}
+.q-badge{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;
+  padding:.14rem .45rem;border-radius:5px;background:#eef1f8;color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:.3rem}
+.q-badge .dot{width:7px;height:7px;border-radius:2px}
+.q-text{margin:0 0 .85rem;font-weight:600;line-height:1.62;font-size:1.02rem}
+.scenario{display:block;background:#f2f5fb;
+  border-inline-start:2px solid var(--line2);padding:.55rem .75rem;margin-bottom:.6rem;
+  font-weight:400;font-size:.93rem;color:var(--ink-soft);border-radius:0 8px 8px 0}
+.opts{list-style:none;padding:0;margin:0}
+.opts li{margin:.4rem 0}
+.opt{width:100%;text-align:start;font-family:'Assistant',sans-serif;font-size:.96rem;
+  background:var(--panel2);border:1px solid var(--line);border-radius:11px;
+  padding:.65rem .8rem;cursor:pointer;display:flex;gap:.65rem;align-items:flex-start;
+  line-height:1.5;color:var(--ink);transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--tc,var(--accent));
+  background:var(--accent-wash);transform:translateX(-3px)}
+.opt:disabled{cursor:default}
+.opt .k{font-family:'IBM Plex Mono',monospace;font-size:.74rem;font-weight:600;
+  flex:0 0 auto;width:1.5rem;height:1.5rem;border-radius:8px;display:grid;place-items:center;
+  margin-top:.05rem;background:var(--bg);border:1px solid var(--line2);color:var(--ink-soft)}
+.opt.correct,.opt.reveal{border-color:var(--ok);background:var(--ok-wash)}
+.opt.correct .k,.opt.reveal .k{background:var(--ok);color:#fff;border-color:var(--ok)}
+.opt.wrong{border-color:var(--flag);background:var(--flag-wash)}
+.opt.wrong .k{background:var(--flag);color:#fff;border-color:var(--flag)}
+.why{margin-top:.75rem;padding:.75rem .85rem;background:var(--accent-wash);
+  border-inline-start:3px solid var(--accent);border-radius:0 10px 10px 0;
+  font-size:.93rem;line-height:1.58}
+.why[hidden]{display:none}
+.why b{color:#2a4aa0}
+.why .tag{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;
+  letter-spacing:.06em;color:var(--accent);display:block;margin-bottom:.3rem}
+.why.miss{background:var(--flag-wash);border-inline-start-color:var(--flag)}
+.why.miss .tag,.why.miss b{color:var(--flag)}
+.done{background:var(--ok-wash);border:1px solid var(--ok);border-radius:12px;
+  padding:1rem;margin-top:1.1rem;text-align:center;color:var(--ink)}
+.done[hidden]{display:none}
+
+/* ---------- exam mode ---------- */
+#exam[hidden]{display:none}
+.exam-start{background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line2);border-radius:16px;padding:2rem 1.6rem;text-align:center;
+  box-shadow:0 16px 40px -20px rgba(26,34,52,.16)}
+.exam-start h2{font-family:'Fraunces',serif;font-weight:900;font-size:1.8rem;margin:0 0 .5rem}
+.exam-start p{color:var(--ink-soft);max-width:44ch;margin:.4rem auto}
+.exam-legend{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1.3rem 0}
+.exam-legend span{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;
+  border:1px solid var(--line);background:var(--panel2);padding:.35rem .65rem;
+  border-radius:999px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:.4rem}
+.exam-legend .dot{width:8px;height:8px;border-radius:2px}
+.btn{font-family:'Assistant',sans-serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(120deg,var(--accent),#4a7de0);color:#fff;border:none;
+  padding:.85rem 2rem;border-radius:12px;cursor:pointer;margin-top:.6rem;
+  box-shadow:0 12px 28px -12px var(--accent);transition:.15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px -12px var(--accent)}
+.btn.sm{font-size:.85rem;padding:.55rem 1.1rem}
+
+.exam-hud{position:sticky;top:56px;z-index:30;display:flex;align-items:center;gap:.8rem;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
+  border:1px solid var(--line2);border-radius:12px;padding:.6rem .9rem;margin-bottom:1.2rem}
+.timer{font-family:'IBM Plex Mono',monospace;font-size:1.05rem;font-weight:600;color:var(--ink)}
+.timer.warn{color:var(--flag)}
+.timer .lb{font-size:.6rem;color:var(--drop);display:block;letter-spacing:.1em}
+.hud-prog{flex:1;height:6px;background:#e6eaf2;border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.hud-prog span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.hud-count{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--ink-soft)}
+
+.result{background:linear-gradient(180deg,var(--panel),var(--bg2));
+  border:1px solid var(--line2);border-radius:16px;padding:2rem 1.6rem;text-align:center}
+.result .ring{width:130px;height:130px;border-radius:50%;margin:0 auto 1rem;
+  display:grid;place-items:center;position:relative;
+  background:conic-gradient(var(--rc,var(--ok)) calc(var(--v,0)*1%),var(--line) 0)}
+.result .ring::before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--panel)}
+.result .ring b{position:relative;font-family:'Fraunces',serif;font-size:2.1rem;color:var(--ink)}
+.result .ring b small{display:block;font-family:'IBM Plex Mono',monospace;font-size:.65rem;
+  color:var(--ink-soft);font-weight:400;letter-spacing:.1em}
+.result h2{font-family:'Fraunces',serif;font-weight:900;font-size:1.7rem;margin:.3rem 0}
+.result .verdict{color:var(--ink-soft);margin-bottom:1.2rem}
+.breakdown{display:grid;gap:.5rem;text-align:start;margin:1.2rem 0;
+  max-width:420px;margin-inline:auto}
+.brow{display:flex;align-items:center;gap:.6rem;background:var(--panel2);
+  border:1px solid var(--line);border-radius:9px;padding:.5rem .7rem;font-size:.88rem}
+.brow .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.brow .nm{flex:1;font-weight:600}
+.brow .sc{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--ink-soft)}
+.result .btn{margin:.4rem .3rem}
+
+@media (max-width:520px){
+  .q{padding:.85rem .8rem}
+  .opt{font-size:.92rem}
+  .part h2{font-size:1.2rem}
+  .exam-hud{top:52px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Mikud · Final Exam 2026 · Summary · Practice · Exam</p>
+    <h1>ויזואליזציה של מידע</h1>
+    <p class="tagline">כל נושא במקום אחד — סיכום ואז מבחן. או מבחן מלא של 20 שאלות בלחיצה.</p>
+    <div class="facts">
+      <span class="fact">20 שאלות רב-ברירה</span>
+      <span class="fact">5 נק׳ לשאלה</span>
+      <span class="fact">5 מסיחים</span>
+      <span class="fact">שעתיים</span>
+      <span class="fact hot">חומר סגור</span>
+    </div>
+  </header>
+</div>
+
+<div class="modebar">
+  <div class="modeinner">
+    <div class="seg" role="tablist" aria-label="מצב">
+      <button id="mStudy" type="button" aria-pressed="true">לימוד לפי נושא</button>
+      <button id="mExam"  type="button" aria-pressed="false">מבחן מלא</button>
+    </div>
+    <div class="spacer"></div>
+    <span class="scorepill" id="score" hidden>0 / 0</span>
+    <div class="pbar" id="pbarWrap" hidden><span id="barfill"></span></div>
+    <button class="ghost" id="reset" type="button" hidden>אפס תשובות</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- STUDY MODE -->
+  <div id="study">
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="tabline"></div>
+    <div id="panels"></div>
+  </div>
+
+  <!-- EXAM MODE -->
+  <div id="exam" hidden></div>
+
+  <footer style="margin-top:3rem;padding-top:1.1rem;border-top:1px solid var(--line);font-size:.78rem;color:var(--drop)">
+    <p>מבוסס על מסמך המיקוד, מערך שיעור 7, קובץ ה-JOIN, מחברת הקורס והמבחן לדוגמה.<br>
+    שאלות התרגול נכתבו לצורך לימוד — אינן מבחן רשמי ואינן צפי לשאלות שיופיעו בפועל.</p>
+  </footer>
+</div>
+
+<script>
+const THEORY = ["<p><strong>מהו Tableau:</strong> תוכנה לניתוח, הצגה ושיתוף נתונים; כלי ויזואליזציה התומך בקבלת החלטות במערכות <span class=\"en\">BI</span> ואנליטיקה.</p>\n\n  <h3>Public מול Desktop</h3>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th></th><th>Tableau Public</th><th>Tableau Desktop</th></tr></thead>\n    <tbody>\n      <tr><td><strong>עלות</strong></td><td>חינמי — <em>בו השתמשנו</em></td><td>בתשלום, גרסה מלאה</td></tr>\n      <tr><td><strong>שמירה</strong></td><td colspan=\"2\" style=\"text-align:center\">שתי הגרסאות — מקומית על המחשב או בענן</td></tr>\n      <tr><td><strong>שיתוף</strong></td><td>דרך אתר <span class=\"en\">Tableau Public</span></td><td>—</td></tr>\n    </tbody>\n  </table>\n  </div>\n\n  <h3>חיבור נתונים — תפריט Connect</h3>\n  <ul>\n    <li><strong>Text File</strong> ← קבצי <code>.csv</code> — <em>זכרו: קובצי CSV הם קובצי טקסט במהות</em></li>\n    <li><strong>Excel</strong> ← קבצי <code>.xlsx</code></li>\n  </ul>\n  <div class=\"box drop\">\n    <p>לא נשאל על סוגי חיבורים אחרים — <code>PDF</code>, <code>JSON</code> וכו׳.</p>\n  </div>\n\n  <h3>מסך Data Source — ארבעת האזורים</h3>\n  <p>המסך הראשון שאליו מגיעים אחרי <span class=\"en\">Connect</span> + בחירת הקובץ.</p>\n  <ol class=\"steps\">\n    <li><strong>Connections</strong> (חלק עליון) — <strong>שם הקובץ</strong> שחיברנו ו<strong>סוג הקובץ</strong></li>\n    <li><strong>אזור עיצוב ה-Database</strong> (צד ימין) — כאן משלבים כמה טבלאות לטבלה אחת (<span class=\"en\">Join</span>)</li>\n    <li><strong>Fields</strong> (ימני תחתון) — שמות המשתנים ועמודת ה-<span class=\"en\">Type</span></li>\n    <li><strong>תצוגה מקדימה</strong> — כל הערכים בטבלת הנתונים</li>\n  </ol>\n  <p>לחיצה על <strong>Sheet1</strong> בתחתית המסך → עוברים לאזור בניית התרשימים.</p>\n\n  <h3>סימוני סוגי שדות</h3>\n  <div class=\"flow\">\n    <span># = מספרי</span><i>·</i>\n    <span>Abc = טקסטואלי</span><i>·</i>\n    <span>לוח שנה = תאריך</span>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">עקרון ההפרדה</span>\n    <p>שינוי נתונים <strong>ב-Tableau עצמו אינו משנה את קובץ המקור</strong> שחיברתי.</p>\n  </div>\n\n  <h3 class=\"star\">Measures מול Dimensions</h3>\n  <ul>\n    <li><strong>Measures</strong> (מדדים) — ערכים כמותיים שיש משמעות לחישוב על בסיסם: ממוצע, סכום</li>\n    <li><strong>Dimensions</strong> (ממדים) — קטגוריות, שנים קלנדריות (<span class=\"en\">2001, 2002</span>)</li>\n  </ul>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">המבחן הלוגי מהמחברת</span>\n    <p><strong>\"מי בסופו של יום קובע את עצם קיום הערך הזה?\"</strong></p>\n    <ul>\n      <li><strong>גורם חיצוני</strong> קובע → <strong>מדד</strong>. אנחנו \"מודדים\" אירוע.<br>\n      <span style=\"color:var(--ink-soft);font-size:.93em\">סכום מכירה · טמפרטורה במפעל · זמני המתנה במוקד</span></li>\n      <li><strong>ערך נתון / החברה</strong> קובעת → <strong>ממד</strong>.<br>\n      <span style=\"color:var(--ink-soft);font-size:.93em\">שנת השקת המשחק · קטגוריית המוצר (Genre)</span></li>\n    </ul>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem\">\n    \"הלקוח לא קובע אילו סוגי משחקים יש בחברה — החברה קובעת (<strong>ממד</strong>). הלקוח כן קובע כמה משחקים הוא קונה ובאיזה סכום (<strong>מדד</strong>).\"</p>\n  </div>\n\n  <h3>Columns ו-Rows</h3>\n  <ul>\n    <li><strong>Columns</strong> = ציר ה-<span class=\"en\">X</span>, אופקי — למשל גרירת <span class=\"en\">Years</span> כדי שהשנים יופיעו על הציר האופקי</li>\n    <li><strong>Rows</strong> = ציר ה-<span class=\"en\">Y</span>, אנכי — למשל גרירת <span class=\"en\">Sales</span> כדי שהמכירות יופיעו על הציר האנכי</li>\n  </ul>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ הכלל שחוזר הכי הרבה במבחן</span>\n    <p style=\"font-size:1.02em\">ערכים על הציר <strong>האנכי</strong> ← גוררים ל-<strong>Rows</strong><br>\n    ערכים על הציר <strong>האופקי</strong> ← גוררים ל-<strong>Columns</strong></p>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem;font-size:.95em\">\n    <strong>שיטת העבודה:</strong> קראו את השאלה, ושאלו <em>קודם</em> — מה על הציר האנכי? מה על האופקי? רק אז בחרו. הכלל הזה חוזר במבחן בכמה ניסוחים שונים — ולפעמים הופכים את הצירים בכוונה כדי לבלבל.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ שתי מלכודות נפוצות סביב הצירים</span>\n    <ul style=\"margin:.3rem 0\">\n      <li><strong>היפוך מכוון:</strong> שתי שאלות עם אותו סיפור בדיוק, אבל באחת השנים על הציר האופקי ובשנייה על ה<strong>אנכי</strong>. אל תענו מהזיכרון — קראו כל פעם מחדש מה על כל ציר.</li>\n      <li><strong>\"כל התשובות שגויות\" זו תשובה אמיתית:</strong> לפעמים אף אחד מהמסיחים לא מתאר את הגרירה הנכונה, ואז התשובה הנכונה היא דווקא \"כל התשובות שגויות\". אל תניחו שתמיד יש מסיח נכון.</li>\n    </ul>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ הדגש המרכזי — Discrete מול Continuous (עמ׳ 13-14)</span>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.3rem 0\">\n      <span>Years + Sales</span><i>←</i>\n      <span>Years = Continuous (רציף)</span><i>←</i>\n      <span>תרשים קו</span>\n    </div>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.3rem 0\">\n      <span>שינוי Years ל-Discrete (בדיד)</span><i>←</i>\n      <span>תרשים עמודות</span>\n    </div>\n    <p style=\"margin-top:.5rem\"><strong>הגדרת Continuous:</strong> הערכים רציפים, <em>ללא הפרדה נקודתית</em> בין ערכיהם.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ מלכודת ה-\"שתי תשובות נכונות\" — דוגמה מלאה</span>\n    <p>תרשים עמודות של משקעים לפי שנים. רוצים <strong>תרשים קו</strong> במקום. מהו הכלי?</p>\n    <div class=\"scroll\">\n    <table style=\"margin:.5rem 0\">\n      <thead><tr><th>המסיח</th><th>?</th></tr></thead>\n      <tbody>\n        <tr><td>א׳ — שינוי סוג התרשים דרך תיבת <span class=\"en\">Marks</span></td><td style=\"color:var(--accent);font-weight:700\">נכון</td></tr>\n        <tr><td>ג׳ — שינוי ערכי השנים למשתנה <strong>רציף</strong> (<span class=\"en\">Continuous</span>)</td><td style=\"color:var(--accent);font-weight:700\">נכון</td></tr>\n        <tr><td><strong>ה׳ — התשובות א׳ ו-ג׳ נכונות</strong></td><td style=\"color:var(--accent);font-weight:700\">← התשובה</td></tr>\n      </tbody>\n    </table>\n    </div>\n    <p style=\"margin-top:.5rem\"><strong>הלקח:</strong> שתי הדרכים לשינוי סוג תרשים הן שתיהן נכונות — ולכן התשובה היא \"שתיהן\". אם אתם רואים מסיח <span class=\"en\">Marks</span> ומסיח <span class=\"en\">Continuous</span> באותה שאלה, <strong>בדקו אם יש אפשרות \"שתיהן\"</strong> לפני שבוחרים אחת.</p>\n    <p style=\"margin-top:.4rem;font-size:.92em;color:var(--ink-soft)\">הערה מהמרצה: ג׳ נכונה <em>בהנחה שסוג התרשים מוגדר Automatic</em>.</p>\n  </div>\n\n  <h3>Marks</h3>\n  <p>מגדיר את סוג התרשים — <span class=\"en\">Automatic</span> / עוגה / קו / עמודות. במצב אוטומטי, סוג התרשים נגזר <strong>מסוג המשתנה</strong> (רציף/בדיד). מאפשר גם פילוח בצבעים, תוויות נתונים ועוד.</p>\n\n  <p><strong>שתי דרכים לשנות סוג תרשים:</strong></p>\n  <ul>\n    <li><strong>דרך א׳ (קלה)</strong> — תיבת הבחירה ב-<span class=\"en\">Marks</span>, בוחרים סוג אחר (למשל <span class=\"en\">Bar</span>)</li>\n    <li><strong>דרך ב׳ (לוגית)</strong> — משנים את <strong>סוג המשתנה</strong> מ-<span class=\"en\">Continuous</span> ל-<span class=\"en\">Discrete</span>. התרשים ישתנה לעמודות <em>גם אם Marks נשאר על Automatic</em></li>\n  </ul>\n\n  <div class=\"box\">\n    <span class=\"box-label\">★ פילוח בצבעים לפי משתנה נוסף — באותו תרשים</span>\n    <ol class=\"steps\" style=\"margin:.4rem 0\">\n      <li>מזהים את המשתנה הנוסף לפילוח (במחברת: <span class=\"en\">Genre</span>)</li>\n      <li>גוררים אותו ל<strong>תחתית אזור ה-Marks</strong></li>\n      <li>לוחצים על כפתור הנקודות משמאל למשתנה → בוחרים <strong>Color</strong></li>\n    </ol>\n    <p>התוצאה: <strong>תרשים אחד</strong> עם פילוח פנימי בצבעים ו<strong>מקרא אוטומטי</strong> מצד ימין — ולא תרשימים נפרדים רבים.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ תבנית חוזרת — פילוח בצבעים</span>\n    <p>הניסוח שמסגיר את התשובה: <em>\"ובנוסף ייכלל <strong>פילוח בצבעים</strong> על כל עמודה\"</em> או <em>\"פילוח לפי ערוץ שיווקי <strong>בתוך</strong> עמודות התרשים\"</em>.</p>\n    <p style=\"margin-top:.5rem\"><strong>הכלל:</strong> פילוח ש<em>לא</em> יוצר תרשים נוסף אלא מרחיב תרשים קיים = <strong>Marks</strong>. אף פעם לא <span class=\"en\">Rows</span>, לא <span class=\"en\">Columns</span>, ולא <span class=\"en\">Filters</span>.</p>\n    <div class=\"flow\" style=\"margin-top:.6rem\">\n      <span>דוגמה: 3 גרירות</span><i>←</i>\n      <span>סוג הגלידה ל-Columns</span><i>+</i>\n      <span>מכירות ל-Rows</span><i>+</i>\n      <span>ערוץ שיווקי ל-Marks</span>\n    </div>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">ברירת מחדל</span>\n    <p>בגרירת שדות מספריים, ברוב המקרים <span class=\"en\">Tableau</span> מבצע <strong>Sum</strong> אוטומטית — התוכנה \"מנחשת\" מה הכי הגיוני לחשב. במחברת: הסיקה סך מכירות בכל שנה. ניתן לשנות לממוצע וכו׳.</p>\n  </div>", "<div class=\"box must\">\n    <span class=\"box-label\">★ Pages — ההבחנה שנשאלת</span>\n    <ul>\n      <li>גרירת משתנה נוסף ל-<strong>Columns/Rows</strong> → נוצרים <strong>תרשימים נוספים</strong> באותו מסך</li>\n      <li>גרירת משתנה נוסף ל-<strong>Pages</strong> → <strong>פילוח על אותו תרשים</strong>, באמצעות תפריט \"דפדוף\" עם חיצים ימינה ושמאלה</li>\n    </ul>\n    <p style=\"margin-top:.5rem\">דוגמה: <span class=\"en\">Sales + Years</span> בתרשים, ואז קטגוריית המוצר ל-<span class=\"en\">Pages</span> → אפשר לדפדף, וכל מסך מציג את התרשים עבור קטגוריה אחרת.</p>\n  </div>\n\n  <h3>Filters — סינון</h3>\n  <p>גרירת שדה ל-<span class=\"en\">Filters</span> מגדירה סינון: התרשים יתייחס <strong>רק</strong> לערכים שנותרו. הערכים המסוננים <em>מוסתרים ולא נכללים</em> בתרשים — למשל, רק שנים מ-2022 ואילך.</p>\n  <p>ההגדרה גמישה: טווח מסוים, ערכים נקודתיים, או כללים מתקדמים יותר.</p>\n\n  <div class=\"box\">\n    <span class=\"box-label\">המנגנון מהמחברת</span>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.2rem 0\">\n      <span>גרירה ל-Filters</span><i>←</i>\n      <span>Pop-Up</span><i>←</i>\n      <span>Top</span><i>←</i>\n      <span>By Field</span><i>←</i>\n      <span>Top / Bottom</span><i>←</i>\n      <span>מספר</span><i>←</i>\n      <span>שדה</span>\n    </div>\n    <p style=\"font-size:.93em;color:var(--ink-soft)\">דוגמה: 5 הז׳אנרים הנמוכים ביותר לפי <span class=\"en\">JP Sales</span> ← <span class=\"en\">Bottom / 5 / JP Sales</span></p>\n  </div>\n\n  <h3>Dashboard</h3>\n  <p><strong>\"תוצר ללקוח\"</strong> — מסך שמרכז את התרשימים הרלוונטיים והתובנות שהלקוח צריך.</p>\n  <ul>\n    <li>יכול לכלול תרשימים מ-<span class=\"en\">Sheets</span> שונים של הקובץ</li>\n    <li><strong>וגם רכיבים נוספים</strong> — קישורים, צורות, תמונות ועוד</li>\n    <li>מומלץ להגדיר <strong>Size ← Automatic</strong> כדי לנצל את כל המסך</li>\n    <li>ניתן ליצור <span class=\"en\">Dashboards</span> / <span class=\"en\">Sheets</span> נוספים דרך סרגל הכלים בתחתית המסך</li>\n  </ul>\n\n  <h3>Publish</h3>\n  <p>שמירת קובץ <span class=\"en\">Tableau</span> באתר <strong>Tableau Public</strong> ← מתקבלת היכולת <strong>לשתף את הקישור או להטמיע אותו</strong> כדי לפרסם את הדשבורד.</p>", "<div class=\"box must\">\n    <span class=\"box-label\">★ תהליך העבודה המלא — לפי הסדר</span>\n    <ol class=\"steps\">\n      <li>מחברים נתונים (<span class=\"en\">Excel / CSV</span>) ל-<span class=\"en\">Tableau</span></li>\n      <li>יוצרים את הגרפים</li>\n      <li>יוצרים <strong>Dashboard</strong> על בסיס הגרפים — עם או בלי אובייקטים נוספים</li>\n      <li>שומרים ל-<strong>Tableau Public</strong></li>\n      <li>משתפים / מעתיקים את הקישור</li>\n      <li>מבקשים מ-<strong>AI</strong> לייצר קוד <span class=\"en\">HTML</span> שיכלול את הטמעת הקישור</li>\n      <li>הולכים ל-<strong>GitHub</strong> ויוצרים <strong>Repository</strong> בשם מתאים</li>\n      <li>יוצרים בתוכו קובץ <code>index.html</code></li>\n      <li>מדביקים את קוד ה-<span class=\"en\">HTML</span></li>\n      <li>שומרים את השינויים = <strong>Commit</strong></li>\n      <li>מפעילים את <span class=\"en\">GitHub Pages</span></li>\n    </ol>\n    <div class=\"flow\">\n      <span>Settings</span><i>›››</i>\n      <span>Pages</span><i>›››</i>\n      <span>Branch (Main)</span><i>››</i>\n      <span>Save</span>\n    </div>\n  </div>\n\n  <div class=\"box drop\">\n    <p>לא צריך את החלק \"כלי AI — יתרונות וחסרונות\".</p>\n  </div>", "<h3 class=\"star\">Frontend מול Backend</h3>\n  <ul>\n    <li><strong>Frontend</strong> — מה שהמשתמש רואה. אצלנו מבוסס <span class=\"en\">HTML</span>, רץ בדפדפן, מוצג דרך <span class=\"en\">GitHub Pages</span></li>\n    <li><strong>Backend</strong> — מה שקורה מאחורי הקלעים. שרת שמקבל בקשות ומחזיר תשובות, מבוסס מסדי נתונים</li>\n  </ul>\n  <div class=\"box drop\">\n    <p>אין צורך להכיר: <code>MongoDB</code> <code>PostgreSQL</code> <code>PHP</code> <code>JAVA</code> <code>PYTHON</code> <code>NODE.JS</code> <code>CSS</code> <code>Javascript</code></p>\n  </div>\n  <div class=\"box must\">\n    <span class=\"box-label\">★ דוגמת הבנק — חובה לדעת</span>\n    <p style=\"font-size:.93em;color:var(--ink-soft);margin-bottom:.6rem\">ייתכן ניסוח אחר או ארגון אחר במבחן — להבין את העיקרון, לא לשנן.</p>\n    <div class=\"scroll\">\n    <table style=\"margin:.3rem 0\">\n      <thead><tr><th>Frontend — מה אתם רואים</th><th>Backend — מה שקורה מאחורי</th></tr></thead>\n      <tbody>\n        <tr>\n          <td>עיצוב האתר, לוגו, כפתורים<br>טופס הכניסה (שם משתמש + סיסמה)<br>גרף יתרת החשבון<br>רשימת עסקאות</td>\n          <td>אימות סיסמה מול מסד הנתונים<br>שליפת יתרת חשבון מה-<span class=\"en\">DB</span><br>חישוב עסקאות וריבית<br>הצפנת כל הנתונים</td>\n        </tr>\n      </tbody>\n    </table>\n    </div>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem\">\n    <strong>המבחן:</strong> אנימציה של כפתור · שינוי צבע · הצגת המספר על המסך = <strong>Frontend</strong>.<br>\n    שליפת הנתון ממסד הנתונים · אימות זהות = <strong>Backend</strong>.</p>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ API — Application Programming Interface</span>\n    <p>דרך מקובלת <strong>לחבר את ה-Frontend לנתונים</strong>. יוצר את החיבור בין <span class=\"en\">Frontend</span> ל-<span class=\"en\">Backend</span>, ו<strong>מגדיר איזה מידע ניתן לבקש ובאיזה פורמט מקבלים אותו</strong>.</p>\n    <p style=\"margin-top:.65rem;border-top:1px dashed var(--rule);padding-top:.6rem\">\n    <strong>האנלוגיה למסעדה (מהשיעור):</strong> אתם <em>לא נכנסים למטבח</em> (<span class=\"en\">Backend</span>) — אלא מזמינים ממה שבתפריט (<span class=\"en\">API</span>) ומקבלים את האוכל (<span class=\"en\">Response</span>).</p>\n  </div>\n\n  <h3 class=\"star\">הגדרת GAS והקונספט</h3>\n  <div class=\"box must\">\n    <span class=\"box-label\">ההגדרה הפורמלית</span>\n    <p><span class=\"en\">Google Apps Script</span> הוא <strong>פלטפורמת תכנות בענן של גוגל</strong> המבוססת על <span class=\"en\">JavaScript</span>, המאפשרת לכתוב קוד ש<strong>רץ על שרתי גוגל</strong> ולבצע פעולות אוטומטיות עם שירותי <span class=\"en\">Google</span>. בהקשר שלנו — מאפשר <strong>לדמות Backend פשוט ללא צורך בשרת פיזי</strong>.</p>\n  </div>\n  <p>באמצעות השירות אנחנו <strong>מדמים שרת</strong> (<span class=\"en\">Backend</span>) שמביא את הנתונים, ומחברים אותו ל-<span class=\"en\">Frontend</span> ב-<span class=\"en\">HTML</span> שמוצג דרך <span class=\"en\">GitHub Pages</span>.</p>\n  <div class=\"box must\">\n    <p style=\"font-size:1.05em\"><strong>GAS מדמה שרת — אך איננו שרת בעצמו.</strong></p>\n    <p style=\"margin-top:.5rem\">איך זה עובד בפועל: <span class=\"en\">GAS</span> <strong>פורס קוד על שרתי גוגל וחושף URL ציבורי</strong> (<span class=\"en\">Web App</span>) שמקבל בקשות. הקוד רץ <em>על שרתי גוגל</em> — לא על המחשב של המשתמש.</p>\n  </div>\n\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>יתרונות GAS</th><th>חסרונות / מגבלות GAS</th></tr></thead>\n    <tbody>\n      <tr><td>חינמי</td><td>מוגבל ל-<span class=\"en\">Google</span></td></tr>\n      <tr><td>לא דורש הגדרת שרת</td><td>מוגבל בעומסים — פחות מתאים ליישומים המוניים</td></tr>\n      <tr><td>מחובר (אינטגרציה) ל-<span class=\"en\">Google Sheets</span></td><td>מאפשר פחות גמישות</td></tr>\n      <tr><td>פריסה בלחיצה אחת (<span class=\"en\">Deploy</span>) — ברמת ה-<span class=\"en\">Web App</span></td><td>—</td></tr>\n    </tbody>\n  </table>\n  </div>\n\n  <p><strong>\"מתי להשתמש\"</strong> — לא לשנן. רק להבין שפרויקט ניסיוני / התחלתי / משתמש שפועל בעיקר דרך <span class=\"en\">Google</span> — מתאים.</p>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ זרימת עבודה באפליקציה</span>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.2rem 0\">\n      <span>הזנת קלט</span><i>←</i>\n      <span>בדיקת תקינות</span><i>←</i>\n      <span>שרת GAS: שליפה ועיבוד</span><i>←</i>\n      <span>הצגה למשתמש</span>\n    </div>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ Fallback — מנגנון גיבוי (המיקוד אומר שכן צריך לדעת)</span>\n    <p>באפליקציות ששולפות נתונים מנהיגים במקרים רבים מנגנוני גיבוי: <strong>אם לא ניתן לשלוף נתון ממקור מסוים — פונים למקור אחר.</strong></p>\n    <p style=\"margin-top:.65rem;border-top:1px dashed var(--rule);padding-top:.6rem\">\n    <strong>ומה אם גם מקור הגיבוי נכשל?</strong> התשובה הנכונה: המערכת <em>לא קורסת</em>. השגיאה נתפסת, מוחזרת הודעה <strong>ספציפית לאותו פריט בלבד</strong>, ו<strong>שאר הפריטים ממשיכים לעבוד</strong>. שגיאה ברמת פריט אחד לא מפילה את הבקשה כולה.</p>\n    <p style=\"margin-top:.4rem;font-size:.93em;color:var(--ink-soft)\">מסיחים שגויים: \"המערכת תקרוס ותחזיר שגיאה לכל הפריטים\" · \"יוצגו ערכי 0\" · \"המערכת אוטומטית תשאל שרת אחר\".</p>\n  </div>\n\n  <div class=\"box drop\">\n    <span class=\"box-label\">לא צריך</span>\n    <p>טבלת \"GAS מול Backend אמיתי\" · <code>doGet</code>/<code>doPost</code>/<code>Payload Parsing</code> · <code>Time Series</code> · ארכיטקטורת המערכת הפיננסית · אלגוריתם <code>dateMap</code> · <code>Frontend Validation</code> · שאלות 19, 20, 21, 24, 25</p>\n  </div>", "<p style=\"color:var(--ink-soft);font-size:.93em;margin-top:.5rem\">כולל התחשבות בתכנים של התרגול בשיעורים 8 ו-9</p>\n\n  <h3 class=\"star\">הגדרת BI — ההגדרה הפורמלית \"בכחול\"</h3>\n  <div class=\"box must\">\n    <p><strong>בינה עסקית</strong> היא מערך של <em>טכנולוגיות, תהליכים, ארכיטקטורות ומערכות</em> הממירים <strong>נתונים גולמיים</strong> (<span class=\"en\">Raw Data</span>) למידע בעל משמעות ולתובנות עסקיות <strong>מניעות-פעולה</strong> (<span class=\"en\">Actionable Insights</span>).</p>\n    <p style=\"margin-top:.55rem\">מטרת העל של מערכות ה-<span class=\"en\">BI</span>: <strong>לתמוך ולשפר את איכות קבלת ההחלטות הניהוליות בארגון.</strong></p>\n  </div>\n  <p>בינה עסקית זה <em>לא סתם \"נתונים\"</em> — אלא כלי שכל תפקידו ומטרתו נגזר מהרצון להגיע ליעדים ולקבל החלטות.</p>\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ מלכודת — שאלה 1 בשיעור</span>\n    <p>מסיחים שנפסלו: \"תוכנה לייצוא גרפים ממערכות <span class=\"en\">ERP</span>\" · \"מערכת להזנת נתונים חשבונאיים בזמן אמת\" · \"אלגוריתם <span class=\"en\">AI</span> לחיזוי מחירי מניות\".</p>\n    <p style=\"margin-top:.4rem\"><span class=\"en\">BI</span> הוא <strong>מערך כולל</strong> — לא כלי אחד, ולא מוגבל להזנה או לגרפים בלבד.</p>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ Actionable Insights — תובנות מניעות פעולה</span>\n    <p>מושג <strong>מרכזי</strong>. עשויים לתת היגדים ולבקש לזהות מי מהם <span class=\"en\">Actionable Insight</span>.</p>\n    <p style=\"margin-top:.6rem\"><strong>שלושת המאפיינים:</strong></p>\n    <ol class=\"steps\" style=\"margin:.4rem 0\">\n      <li><strong>ספציפית</strong> — מתייחסת לבעיה קונקרטית</li>\n      <li><strong>ברת-ביצוע</strong> — ניתן לפעול לפיה</li>\n      <li><strong>מבוססת ראיות</strong> — קיימים נתונים התומכים בהמלצה או בהחלטה</li>\n    </ol>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">★ דוגמת הנטישה — המיקוד מפנה אליה במפורש</span>\n    <div class=\"scroll\">\n    <table style=\"margin:.3rem 0\">\n      <thead><tr><th>❌ מידע בלבד — לא מניע פעולה</th><th>✅ Actionable Insight</th></tr></thead>\n      <tbody>\n        <tr>\n          <td>\"שיעור הנטישה של לקוחות עלה ל-12%\"</td>\n          <td>\"לקוחות שלא השתמשו באפליקציה בחודש הראשון נוטשים ב-80%, <strong>לכן צריך לשלוח להם מדריך שימוש ביום הראשון</strong>\"</td>\n        </tr>\n      </tbody>\n    </table>\n    </div>\n  </div>\n\n  <p style=\"margin-top:1.1rem\"><strong>דוגמה נוספת לתרגול הסיווג:</strong></p>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>ההיגד</th><th>?</th><th>למה</th></tr></thead>\n    <tbody>\n      <tr>\n        <td>\"זמן הכניסה הממוצע הוא 3.2 שניות\"</td>\n        <td style=\"color:var(--flag);font-weight:700;white-space:nowrap\">לא</td>\n        <td>הנתון הגולמי כפי שהוא — מתאר <strong>מה קרה</strong>, לא מה לעשות</td>\n      </tr>\n      <tr>\n        <td>\"יש לשפר את ביצועי השרת <strong>בכלל</strong>\"</td>\n        <td style=\"color:var(--flag);font-weight:700;white-space:nowrap\">לא</td>\n        <td>נכשל ב<strong>ספציפיות</strong> — לא מתייחס לבעיה קונקרטית</td>\n      </tr>\n      <tr>\n        <td>\"זמן הכניסה הוא בינוני בהשוואה לתעשייה\"</td>\n        <td style=\"color:var(--flag);font-weight:700;white-space:nowrap\">לא</td>\n        <td>מתאר מצב, לא מוביל לפעולה</td>\n      </tr>\n      <tr>\n        <td>\"משתמשים שזמן הכניסה שלהם עולה על 4 שניות נוטשים ב-68% בשבוע הראשון — יש לאופטימז את ה-<span class=\"en\">Onboarding</span> לקהל הזה\"</td>\n        <td style=\"color:var(--accent);font-weight:700;white-space:nowrap\">כן</td>\n        <td><strong>ספציפית</strong> (מי מושפע) · <strong>ברת-ביצוע</strong> (מה לעשות) · <strong>מבוססת ראיות</strong> (נתוני נטישה)</td>\n      </tr>\n    </tbody>\n  </table>\n  </div>\n\n  <h3 class=\"star\">פירמידת DIKW — מנתון לחוכמה</h3>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th></th><th>עברית</th><th>אנגלית</th><th>הגדרה ודוגמה</th></tr></thead>\n    <tbody>\n      <tr><td><strong>1</strong></td><td><strong>נתון</strong></td><td><span class=\"en\">Data</span></td>\n        <td>עובדות גולמיות, מספרים או סמלים <strong>חסרי הקשר</strong><br><span style=\"color:var(--ink-soft)\">המספר <strong>\"1200\"</strong> — בדיוק מה שקופה רושמת מוציאה, מספרים בלי הקשר</span></td></tr>\n      <tr><td><strong>2</strong></td><td><strong>מידע</strong></td><td><span class=\"en\">Information</span></td>\n        <td>נתונים שעברו עיבוד וקיבלו <strong>הקשר ומשמעות</strong><br><span style=\"color:var(--ink-soft)\">\"1,200 ₪ פדיון לשולחן #4 במסעדה ב-31/12\" — יודעים מי, מה, מתי</span></td></tr>\n      <tr><td><strong>3</strong></td><td><strong>ידע</strong></td><td><span class=\"en\">Knowledge</span></td>\n        <td>הבנת המידע בהקשר רחב יותר, <strong>זיהוי תבניות</strong><br><span style=\"color:var(--ink-soft)\">\"הפדיון הממוצע בשולחנות משפחתיים בימי שלישי נמוך ב-30% משאר השבוע\" — רואים מגמה</span></td></tr>\n      <tr><td><strong>4</strong></td><td><strong>בינה / חוכמה</strong></td><td><span class=\"en\">Wisdom</span></td>\n        <td>הפעלת הידע ל<strong>קבלת החלטה</strong> — שלב ה-<span class=\"en\">Actionable Insight</span><br><span style=\"color:var(--ink-soft)\">\"נשיק מבצע 'ארוחות ילדים חינם' ביום שלישי כדי להעלות הפדיון\" — פועלים!</span></td></tr>\n    </tbody>\n  </table>\n  </div>\n  <div class=\"box must\">\n    <p>חובה לדעת <strong>גם בעברית וגם באנגלית</strong>, ואת <strong>הדוגמאות שמתחת לפירמידה</strong>. במבחן ייתכנו דוגמאות אחרות לסיווג לפי אותם קריטריונים.</p>\n    <p style=\"margin-top:.5rem\">מה ה-<span class=\"en\">BI</span> עושה בפועל? הוא <strong>הגשר הדיגיטלי</strong> שמאפשר לארגון לעלות במעלה הפירמידה — מהנתון הגולמי בבסיס ועד לתובנה במשרד המנכ״ל.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ תרגול סיווג — בדיוק פורמט שעלול לחזור</span>\n    <p>חברת תעופה. סדרו מהנמוך לגבוה בפירמידה:</p>\n    <div class=\"scroll\">\n    <table style=\"margin:.5rem 0\">\n      <thead><tr><th>ההיגד</th><th>הרמה</th></tr></thead>\n      <tbody>\n        <tr><td>\"הטיסה נחתה\"</td><td><strong>Data</strong> — גולמי, בלי הקשר</td></tr>\n        <tr><td>\"טיסה <span class=\"en\">TLV-BER2847</span> נחתה ב-14:32\"</td><td><strong>Information</strong> — עם הקשר</td></tr>\n        <tr><td>\"48% מנוסעי הקו חוזרים תוך 30 יום\"</td><td><strong>Knowledge</strong> — תבנית</td></tr>\n        <tr><td>\"להשיק מנוי חודשי <span class=\"en\">TLV-BER</span> למגזר ההיי-טק\"</td><td><strong>Wisdom</strong> — פעולה עסקית</td></tr>\n      </tbody>\n    </table>\n    </div>\n  </div>\n\n  <h3 class=\"star\">OLTP מול OLAP</h3>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th></th><th>OLTP</th><th>OLAP</th></tr></thead>\n    <tbody>\n      <tr><td><strong>פירוש</strong></td><td>Online <strong>Transaction</strong> Processing</td><td>Online <strong>Analytical</strong> Processing</td></tr>\n      <tr><td><strong>עברית</strong></td><td>עיבוד ותיעוד פעולות בזמן אמת</td><td>עיבוד אנליטי</td></tr>\n      <tr><td><strong>שייך ל</strong></td><td>מערכות תפעוליות — <strong>ERP</strong></td><td>מערכות <strong>BI</strong></td></tr>\n      <tr><td><strong>עוסק ב</strong></td><td>עסקאות, טרנזקציות, תיעוד מפורט</td><td>אנליטיקה וניתוח מתקדם לקבלת החלטות</td></tr>\n      <tr><td><strong>דוגמאות</strong></td><td><span class=\"en\">SAP</span> · <span class=\"en\">Priority</span></td><td><span class=\"en\">Tableau</span> · <span class=\"en\">Power BI</span></td></tr>\n    </tbody>\n  </table>\n  </div>\n  <div class=\"box must\">\n    <p style=\"font-size:1.05em\"><strong>OLAP היא התשתית למערכות BI.</strong></p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">ההמחשה מהשיעור</span>\n    <ul style=\"margin:.3rem 0\">\n      <li><strong>OLTP</strong> — קופאית סורקת מוצר בסופר = טרנזקציה. עובד מזין חשבונית ל-<span class=\"en\">SAP</span> = טרנזקציה. פעולות <em>מהירות, קטנות וממוקדות</em>.</li>\n      <li><strong>OLAP</strong> — סמנכ״ל שואל \"מה מגמת הרווחיות של כל הסניפים ב-5 השנים האחרונות?\" → סריקת מיליארדי רשומות. <em>זו ליבת ה-BI.</em></li>\n    </ul>\n  </div>\n\n  <h3 class=\"star\">ארכיטקטורת מערכת BI — השרשרת המלאה</h3>\n  <p>חובה לדעת את <strong>השרשרת המלאה</strong> ואת ההגדרות של כל רכיב, <strong>כולל הדוגמאות</strong>. אין צורך בשמות פלטפורמות ספציפיות שלא צוינו במיקוד.</p>\n  <p style=\"color:var(--ink-soft);font-size:.93em\">כיצד נתון גולמי מה-<span class=\"en\">ERP</span> מגיע לדשבורד המנכ״ל — מסע בן <strong>5 תחנות</strong>:</p>\n\n  <div class=\"flow\">\n    <span>1 · מקורות נתונים</span><i>←</i>\n    <span>2 · ETL / ELT</span><i>←</i>\n    <span>3 · מחסן נתונים</span><i>←</i>\n    <span>4 · שכבה סמנטית</span><i>←</i>\n    <span>5 · דשבורדים</span>\n  </div>\n\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>שלב</th><th>מה זה</th><th>דוגמאות</th></tr></thead>\n    <tbody>\n      <tr>\n        <td><strong>1</strong><br>מקורות נתונים<br><span style=\"font-size:.8em;color:var(--drop)\">Data Sources</span></td>\n        <td>המערכות התפעוליות של הארגון. <strong>כל מערכת שמייצרת נתונים היא מקור פוטנציאלי.</strong></td>\n        <td>קופות רושמות · <span class=\"en\">CRM</span> · אתר אינטרנט · <span class=\"en\">ERP</span> · רשתות חברתיות · חיישני <span class=\"en\">IoT</span></td>\n      </tr>\n      <tr>\n        <td><strong>2</strong><br>ETL / ELT<br><span style=\"font-size:.8em;color:var(--drop)\">לב ה-Pipeline</span></td>\n        <td><strong>Extract</strong> — שאיבה ממקורות<br><strong>Transform</strong> — ניקוי, איחוד פורמטים, ערכים חסרים<br><strong>Load</strong> — אחסון במחסן</td>\n        <td><strong>האנלוגיה למטבח:</strong> צוות ההכנה מקבל סחורה מספקים שונים, שוטף וחותך (<span class=\"en\">Transform</span>), ומאחסן במקרר הגדול (<span class=\"en\">Load</span>)</td>\n      </tr>\n      <tr>\n        <td><strong>3</strong><br>מחסן נתונים<br><span style=\"font-size:.8em;color:var(--drop)\">DWH</span></td>\n        <td>אחסון הנתונים המעובדים</td>\n        <td><span class=\"en\">Snowflake</span> · <span class=\"en\">BigQuery</span></td>\n      </tr>\n      <tr>\n        <td><strong>4</strong><br>שכבה סמנטית<br><span style=\"font-size:.8em;color:var(--drop)\">Semantic Layer</span></td>\n        <td>תרגום השמות הטכניים לשפה עסקית</td>\n        <td>ראו הדוגמה למטה</td>\n      </tr>\n      <tr>\n        <td><strong>5</strong><br>דשבורדים<br><span style=\"font-size:.8em;color:var(--drop)\">Visualization</span></td>\n        <td>הצגה למנהלים ולמקבלי ההחלטות</td>\n        <td><span class=\"en\">Tableau</span> · <span class=\"en\">Power BI</span></td>\n      </tr>\n    </tbody>\n  </table>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">דוגמה מהשיעור — רשת אופנה, שלב 1</span>\n    <p>קופות (נתוני עסקאות) + <span class=\"en\">CRM</span> (פרטי לקוחות) + אתר האינטרנט (קליקים, עגלות נטושות) + מלאי (<span class=\"en\">ERP</span>) + מדיה חברתית = <strong>5 מקורות שונים שצריך לאחד</strong>.</p>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ דגש מרכזי וחשוב — ETL מול ELT</span>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.2rem 0\">\n      <span>Extract — שליפה ממקורות שונים</span><i>←</i>\n      <span>Transform — ניקוי, איחוד פורמטים, ערכים חסרים</span><i>←</i>\n      <span>Load — טעינה ואחסון במחסן</span>\n    </div>\n    <ul style=\"margin-top:.7rem\">\n      <li><strong>ETL</strong> = מחסני נתונים <strong>מסורתיים / קלאסיים</strong> — העיבוד מבוצע <em>טרם</em> הכניסה למחסן</li>\n      <li><strong>ELT</strong> = מחסני נתונים <strong>מודרניים</strong> — מסוגלים לטפל בעיבוד <em>בעצמם</em></li>\n    </ul>\n    <p style=\"margin-top:.5rem\">דוגמה למחסן <span class=\"en\">ELT</span> שצריך להכיר: <strong>Snowflake בלבד</strong>.</p>\n  </div>\n\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>סוג המחסן</th><th>סוג הנתונים</th></tr></thead>\n    <tbody>\n      <tr><td><strong>Data Warehouse</strong></td><td>נתונים <strong>מובנים, מסודרים</strong></td></tr>\n      <tr><td><strong>Data Lake</strong></td><td>נתונים <strong>לא מובנים</strong>, גמישים יותר</td></tr>\n      <tr><td><strong>Data Lakehouse</strong></td><td><strong>שילוב</strong> של השניים</td></tr>\n    </tbody>\n  </table>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ שכבה סמנטית — Semantic Layer</span>\n    <p><strong>ההגדרה הפורמלית:</strong> תרגום השמות הטכניים במערכת <strong>לשפה עסקית</strong>, לטובת תובנות ברורות למקבלי ההחלטות.</p>\n    <p style=\"margin-top:.65rem;border-top:1px dashed var(--rule);padding-top:.6rem\">\n    <strong>האנלוגיה לתפריט (מהשיעור — הדרך הקלה להבין):</strong><br>\n    הלקוח (המנהל) לא צריך לדעת שב-<span class=\"en\">DB</span> יש <code>חומר גלם 4517-B</code> — הוא רואה בתפריט <strong>\"שניצל ביתי\"</strong>.<br>\n    באותו אופן, השכבה הסמנטית מתרגמת <code>tbl_trx_2024</code> ל-<strong>\"עסקאות 2024\"</strong>.</p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">Data Silos</span>\n    <p>אתגר מרכזי — קושי ליצור <strong>אינטגרציה עמוקה בין מאגרי מידע שונים</strong> כדי להרכיב תמונה מלאה וקונקרטית.</p>\n  </div>\n\n  <h3>כלים מובילים בשוק ה-BI — רק שניים</h3>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>Tableau</th><th>Power BI</th></tr></thead>\n    <tbody>\n      <tr>\n        <td><strong>קרוס-פלטפורמה</strong> — מתאים לכל מערכות ההפעלה</td>\n        <td><strong>Windows בלבד</strong>. אינטגרציה מעולה עם ה-<span class=\"en\">Ecosystem</span> של <span class=\"en\">Microsoft Office</span></td>\n      </tr>\n    </tbody>\n  </table>\n  </div>\n\n  <h3 class=\"star\">KPI — Key Performance Indicators</h3>\n  <p>מדדי ביצוע עיקריים. <strong>לדעת גם בעברית וגם באנגלית.</strong> רק שתי הדוגמאות הבאות:</p>\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>תעשייה</th><th>יעד</th><th>מדד</th><th>הגדרה</th></tr></thead>\n    <tbody>\n      <tr><td><strong>קמעונאות</strong></td><td>הגדלת פדיון</td><td><strong>AOV</strong><br><span class=\"en\">Average Order Value</span></td>\n        <td>היחס בין <strong>הפדיון הכולל</strong> ל<strong>מספר העסקאות</strong></td></tr>\n      <tr><td><strong>SaaS</strong></td><td>שימור לקוחות</td><td><strong>Churn Rate</strong><br>שיעור נטישה</td>\n        <td>היחס בין <strong>הלקוחות שעזבו</strong> ל<strong>לקוחות בתחילת התקופה</strong></td></tr>\n    </tbody>\n  </table>\n  </div>\n  <div class=\"box drop\">\n    <p>אין צורך לדעת: <code>NPL Ratio</code> <code>CAC</code> <code>Loss Ratio</code> <code>NOI</code></p>\n  </div>\n\n  <h3 class=\"star\">מסמך BRD — Business Requirements Document</h3>\n  <div class=\"box must\">\n    <p><strong>המסמך המתווך בין השפה העסקית של המנכ״ל לבין השפה הטכנית של המפתח.</strong></p>\n  </div>\n  <p><strong>המבנה — רק 5 הרכיבים האלה, וגם הסדר שלהם:</strong></p>\n  <ol class=\"steps\">\n    <li>תקציר מנהלים — תמצית הפרויקט: מה נבנה, למה, ועבור מי</li>\n    <li>רקע עסקי — מדוע הפרויקט נחוץ כעת? איזו בעיה הוא פותר?</li>\n    <li>יעדים ו-<span class=\"en\">KPIs</span> — יעדים מדידים ברורים</li>\n    <li>מקורות נתונים — מאילו מערכות?</li>\n    <li>לוח זמנים</li>\n  </ol>\n  <div class=\"box drop\">\n    <p><strong>שימו לב:</strong> במערך השיעור מופיעים <strong>9 רכיבים</strong>, אך המיקוד צמצם ל-5 בלבד. הרכיבים שהושמטו ו<strong>אין צורך לדעת</strong>: בעלי עניין (<span class=\"en\">Stakeholders</span>) · דרישות פונקציונליות · <span class=\"en\">Business Glossary</span> · דרישות לא-פונקציונליות · תקציב.</p>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ מתודולוגיית אפיון Top-Down — חשוב מאוד</span>\n    <p><strong>כל המערכת נגזרת מהגדרת היעדים תחילה</strong>, ורק אז בונים את יתר שלבי התהליך וההגדרות.</p>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.5rem 0\">\n      <span>1 · יעד עסקי</span><i>←</i>\n      <span>2 · שאלות עסקיות</span><i>←</i>\n      <span>3 · הגדרת KPIs</span><i>←</i>\n      <span>4 · מקורות נתונים — רק עכשיו פונים ל-IT!</span>\n    </div>\n    <p style=\"margin-top:.5rem\">לכן: היגדים שמתייחסים ל<strong>בנייה תחילה ואז שימוש בנתונים</strong> — <em>אינם עומדים</em> בהגדרות תהליכי האפיון של <span class=\"en\">BI</span>.</p>\n    <p style=\"margin-top:.5rem;font-size:.93em;color:var(--ink-soft)\">לא לשנן את המתווה — רק להבין את העיקרון.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ הטעות הנפוצה — כך המסיח ייראה</span>\n    <p><em>\"יש לנו המון נתונים — בואו נבנה דשבורד!\"</em></p>\n    <p style=\"margin-top:.4rem\">זוהי גישת <strong>Bottom-Up</strong> שמובילה לדשבורדים שאף אחד לא משתמש בהם. <strong>תמיד מתחילים מהיעד העסקי, לא מהטכנולוגיה.</strong></p>\n  </div>\n\n  <div class=\"box drop\">\n    <span class=\"box-label\">לא צריך מהתיאוריה</span>\n    <p>ההיסטוריה של המונח · \"למה BI? נתונים מהשטח\" · \"דוגמאות מהשטח — ענקיות שמנצחות בזכות נתונים\" · הדוגמה המעמיקה של שופרסל · \"BI מול ERP מול Excel\" · עמודת <span class=\"en\">Excel/Google Sheet</span> בטבלה · \"הבעיה הקלאסית — גרסאות אמת מרובות\" · הקשר לענן · <span class=\"en\">Modern Data Stack</span> · ציר הזמן של <span class=\"en\">BI</span> · מפת הקריירה</p>\n  </div>", "<p><strong>מטרה:</strong> לאחד מספר טבלאות לטבלה אחת, כדי להקל על עיבוד הנתונים ב-<span class=\"en\">Tableau</span> ועל יצירת התרשימים.</p>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ תנאי חיוני</span>\n    <p>קיום <strong>שדה מקשר (מזהה)</strong> בין הטבלאות — ערך שדה מזהה אחיד. <em>השדה הזה הוא ה\"דבק\" שלנו.</em></p>\n    <p style=\"margin-top:.4rem;font-size:.94em;color:var(--ink-soft)\">דוגמה: חיבור בין טבלת הזמנות לטבלת לקוחות יתאפשר <strong>רק אם</strong> בשתיהן יש שדה \"מספר לקוח\".</p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">למה בכלל צריך Join ב-Tableau?</span>\n    <p>כדי שתהיה לנו <strong>טבלה אחת שטוחה ורחבה</strong> שכוללת את כל השדות הרלוונטיים — כך נוכל לגרור אותם ל-<span class=\"en\">Rows/Columns/Marks</span> ללא מגבלות של מקורות נתונים נפרדים.</p>\n  </div>\n\n  <h3 class=\"star\">ארבעת הסוגים — הדוגמה המלאה מהשיעור</h3>\n  <p>שתי טבלאות. שימו לב ל<strong>שתי הרשומות היתומות</strong>: גדי (לקוח בלי הזמנות) ו-A102 (הזמנה של לקוח מחוק).</p>\n\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th colspan=\"2\">טבלה שמאלית: לקוחות</th><th colspan=\"3\">טבלה ימנית: הזמנות</th></tr></thead>\n    <tbody>\n      <tr><td><strong>ID</strong></td><td><strong>שם</strong></td><td><strong>הזמנה</strong></td><td><strong>ID</strong></td><td><strong>סכום</strong></td></tr>\n      <tr><td>1</td><td>אבי</td><td>A100</td><td>1</td><td>₪50</td></tr>\n      <tr><td>2</td><td>בני</td><td>A101</td><td>2</td><td>₪75</td></tr>\n      <tr><td>3</td><td><strong>גדי</strong> — ללא הזמנות</td><td>A102</td><td><strong>99</strong> — לקוח מחוק</td><td>₪200</td></tr>\n    </tbody>\n  </table>\n  </div>\n\n  <div class=\"scroll\">\n  <table>\n    <thead><tr><th>הסוג</th><th>מה קורה</th><th>התוצאה</th></tr></thead>\n    <tbody>\n      <tr>\n        <td><strong>Inner</strong><br><span style=\"font-size:.8em;color:var(--drop)\">חיתוך</span></td>\n        <td>רק רשומות שיש להן <strong>התאמה בשתי</strong> הטבלאות. גדי ולקוח 99 <strong>נמחקים</strong>.</td>\n        <td>אבי · בני<br><strong>2 שורות</strong></td>\n      </tr>\n      <tr>\n        <td><strong>Left</strong></td>\n        <td>כל השמאלית נשמרת. אין התאמה בימין → <span class=\"en\">Null</span> בשדות הימניים. A102 <strong>נזרק</strong>.</td>\n        <td>אבי · בני · <strong>גדי → Null, Null</strong><br><strong>3 שורות</strong></td>\n      </tr>\n      <tr>\n        <td><strong>Right</strong></td>\n        <td>כל הימנית נשמרת. אין התאמה בשמאל → <span class=\"en\">Null</span> בשדות השמאליים. גדי <strong>נזרק</strong>.</td>\n        <td>אבי · בני · <strong>Null, Null → A102</strong><br><strong>3 שורות</strong></td>\n      </tr>\n      <tr>\n        <td><strong>Full Outer</strong></td>\n        <td><strong>מביא את הכל מהכל.</strong> אף רשומה לא הולכת לאיבוד. איפה שחסר — מושלם ב-<span class=\"en\">Null</span>.</td>\n        <td>אבי · בני · <strong>גדי</strong> · <strong>A102</strong><br><strong>4 שורות</strong></td>\n      </tr>\n    </tbody>\n  </table>\n  </div>\n  <p>אופן הפעולה <strong>זהה למה שלמדתם ב-SQL</strong>.</p>\n\n  <div class=\"box\">\n    <span class=\"box-label\">★ שתי דרכים לצרף טבלאות — ההבחנה מהמחברת</span>\n    <ol class=\"steps\" style=\"margin:.4rem 0\">\n      <li><strong>\"הדרך ה-SQL-ית\"</strong> — בסיס נתונים <strong>רילציוני</strong>, קשרים בין ישויות, מפתחות → <em>לא עבדנו בדרך הזו</em></li>\n      <li><strong>Join</strong> — יצירת <strong>טבלה אחת מאוחדת</strong> מתוך מספר טבלאות → <em>בדרך הזו התמקדנו</em></li>\n    </ol>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem\">\n    <strong>שימו לב להבחנה:</strong> <span class=\"en\">Join</span> הוא <strong>לא</strong> קשר בין טבלאות — אלא <strong>יצירת טבלה אחת מאוחדת</strong> כבסיס לניתוח.</p>\n  </div>\n\n\n  <div class=\"box\">\n    <span class=\"box-label\">התנהגות עם קובץ רב-גיליונות</span>\n    <p>בחיבור <span class=\"en\">Excel</span> עם כמה גיליונות, מסך ה-<span class=\"en\">Data Source</span> יופיע <strong>ריק</strong> — ללא תצוגה מקדימה וללא שדות. הסיבה: התוכנה לא יודעת לאיזו טבלה להתייחס.</p>\n    <p>הפתרון: לגרור לפחות טבלה אחת לאזור. <strong>מקובל להתחיל מהטבלה \"הגדולה\" / \"המרכזית\".</strong></p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ מלכודות נפוצות — בדיוק בסגנון המבחן</span>\n    <div class=\"scroll\">\n    <table style=\"margin:.5rem 0\">\n      <thead><tr><th>הטענה</th><th>?</th><th>למה</th></tr></thead>\n      <tbody>\n        <tr><td>ב-<strong>Full Outer</strong> כל הרשומות משתי הטבלאות תוצגנה <strong>בהכרח</strong></td>\n          <td style=\"color:var(--accent);font-weight:700\">נכון</td><td>—</td></tr>\n        <tr><td>ב-<strong>Full Outer</strong> כל הרשומות תוצגנה, אך <strong>רק אם</strong> בלפחות אחת מהטבלאות קיים ערך ממשי בשדה המזהה</td>\n          <td style=\"color:var(--flag);font-weight:700\">שגוי</td><td>התניה מומצאת</td></tr>\n        <tr><td>ב-<strong>Left Join</strong> <strong>לא ייתכן</strong> שיכללו ערכי <span class=\"en\">Null</span></td>\n          <td style=\"color:var(--flag);font-weight:700\">שגוי</td><td>בדיוק ההפך — <span class=\"en\">Null</span> זה מה שקורה כשאין התאמה בטבלה הימנית</td></tr>\n        <tr><td><strong>Full Outer</strong> = רק רשומות שאותר בגינן מזהה בשתי הטבלאות</td>\n          <td style=\"color:var(--flag);font-weight:700\">שגוי</td><td>זה התיאור של <strong>Inner</strong></td></tr>\n        <tr><td><strong>Full Outer</strong> — אם יושמטו רשומות, רק מהימנית</td>\n          <td style=\"color:var(--flag);font-weight:700\">שגוי</td><td>זה התיאור של <strong>Left</strong></td></tr>\n        <tr><td><strong>Full Outer</strong> שקול ל-<strong>Inner Join</strong></td>\n          <td style=\"color:var(--flag);font-weight:700\">שגוי</td><td>שגוי לחלוטין</td></tr>\n      </tbody>\n    </table>\n    </div>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem\">\n    <strong>הכלל שמארגן את הכל:</strong> ב-<span class=\"en\">Outer Join</span> <em>ערכים מושמטים לא יתקיימו לעולם</em> — רק <span class=\"en\">Null</span>.</p>\n    <p style=\"margin-top:.7rem\"><strong>מלכודת נוספת:</strong> \"אם נשנה את המשתנה שב-<strong>Rows</strong> ל-<span class=\"en\">Continuous</span>, התרשים ישתנה לקו\" — שימו לב שההדגמה במחברת היא על <strong>Years ב-Columns</strong>. היזהרו מהיפוך <span class=\"en\">Rows/Columns</span> במסיחים.</p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">תבנית \"כל הטענות נכונות\"</span>\n    <p>שלוש טענות, כולן נכונות:</p>\n    <ol class=\"steps\" style=\"margin:.4rem 0\">\n      <li><span class=\"en\">JOIN</span> מאפשר לשלב מידע מטבלאות שונות לכדי <strong>טבלה מאוחדת</strong> — נכון בהגדרה</li>\n      <li><span class=\"en\">JOIN</span> דורש <strong>שדות מזהים משותפים</strong> — נכון, זה ה\"דבק\"</li>\n      <li>לעתים <span class=\"en\">JOIN</span> יוצר תוצר המעניק <strong>תמונה מקיפה ומלאה יותר</strong> — נכון</li>\n    </ol>\n    <p style=\"margin-top:.4rem\">התשובה: <strong>כל הטענות נכונות</strong>. אל תחפשו את הפסול כשאין.</p>\n  </div>\n\n  <div class=\"box drop\">\n    <span class=\"box-label\">הביצוע הטכני — המיקוד אומר \"לא צריך\", אבל</span>\n    <p>המיקוד קובע שלא צריך לדעת <strong>איפה לוחצים</strong>. עם זאת, קובץ ה-<span class=\"en\">JOIN</span> (שהמיקוד אומר לדעת <em>\"את כולו\"</em>) כולל שאלה טכנית מפורשת. בגלל הסתירה — הנה השורה התחתונה בלבד, ליתר ביטחון:</p>\n    <p style=\"margin-top:.5rem\"><strong>דאבל קליק</strong> על הטבלה הראשונה שנגררה למסך ה-<span class=\"en\">Data Source</span> ← כך נכנסים לשכבה הפיזית שבה מבצעים <span class=\"en\">Joins</span> אמיתיים עם עיגולי ה-<span class=\"en\">Venn</span>.</p>\n    <p style=\"margin-top:.4rem;font-size:.92em\">גרירה רגילה בגרסאות החדשות יוצרת <strong>Relationships</strong> (\"נודל\") בשכבה הלוגית — <em>לא</em> <span class=\"en\">Join</span> קלאסי. ברירת המחדל שהתוכנה מזהה: <strong>Inner Join</strong>.</p>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ שאלות ספירת שורות — שיטת הפתרון</span>\n    <p>סוג שאלה שחוזר: נותנים שתי טבלאות ושואלים <strong>כמה שורות יהיו בטבלה המאוחדת</strong>.</p>\n    <p style=\"margin-top:.6rem\"><strong>הנוסחה:</strong></p>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.3rem 0\">\n      <span>Inner = רק ההתאמות</span>\n    </div>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.3rem 0\">\n      <span>Full Outer = התאמות</span><i>+</i>\n      <span>יתומים משמאל</span><i>+</i>\n      <span>יתומים מימין</span>\n    </div>\n    <div class=\"flow\" style=\"border:none;background:transparent;padding:.3rem 0\">\n      <span>Left = כל השמאלית</span><i>·</i>\n      <span>Right = כל הימנית</span>\n    </div>\n    <p style=\"margin-top:.65rem;border-top:1px dashed var(--rule);padding-top:.55rem\">\n    <strong>דוגמה:</strong> טבלת שכר 10 שורות, טבלת כתובות 10 שורות. <strong>7 שורות</strong> מתאימות בשדה <code>Employee ID</code>; 3 יתומות משמאל (ID 29, 30, 33) ו-3 יתומות מימין (<span class=\"en\">Null</span>).</p>\n    <ul style=\"margin-top:.4rem\">\n      <li><strong>Outer Join</strong> ← 7 + 3 + 3 = <strong>13 שורות</strong></li>\n      <li><strong>Inner Join</strong> ← <strong>7 שורות</strong> בלבד</li>\n    </ul>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ שלוש מלכודות ספירה — כל אחת שאלה שלמה</span>\n\n    <p><strong>1 · Left Join עם יתומים מימין</strong><br>\n    100 לקוחות משמאל · 20 תלונות מימין, מתוכן 15 מקושרות ו-5 אנונימיות. <strong>כמה שורות?</strong></p>\n    <p style=\"margin-top:.35rem\">התשובה: <strong>100</strong>. כל 100 הלקוחות נשמרים (85 עם <span class=\"en\">Null</span>), <strong>ו-5 התלונות האנונימיות נזרקות לפח</strong> — ב-<span class=\"en\">Left Join</span> הטבלה הימנית היא <em>\"האורחת\", לא \"בעלת הבית\"</em>.<br>\n    <span style=\"font-size:.9em;color:var(--ink-soft)\">מסיחים מפתים: 15 · 105 · 120</span></p>\n\n    <p style=\"margin-top:.9rem;border-top:1px dashed var(--rule);padding-top:.6rem\">\n    <strong>2 · ⭐ הכפלת שורות — One-to-Many</strong><br>\n    למתן רשומה <strong>אחת</strong> בטבלת העובדים, אבל <strong>3 רשומות</strong> בטבלת הצריכה. <span class=\"en\">Inner Join</span> — כמה שורות עם שמו?</p>\n    <p style=\"margin-top:.35rem\">התשובה: <strong>3</strong>. ה-<span class=\"en\">Join</span> <strong>משכפל</strong> את פרטי מתן לאורך כל 3 השורות, כדי לא לאבד נתוני צריכה.<br>\n    <strong>למה זה חשוב:</strong> כשמבצעים <span class=\"en\">Sum</span> ב-<span class=\"en\">Tableau</span> — משכורתו של מתן תיספר <strong>3 פעמים</strong> בטעות. הליך תקין, אבל חייבים להיות מודעים.</p>\n\n    <p style=\"margin-top:.9rem;border-top:1px dashed var(--rule);padding-top:.6rem\">\n    <strong>3 · Right Join הפוך = Left Join</strong><br>\n    גררו <span class=\"en\">Sales</span> ואז <span class=\"en\">Products</span> עם <span class=\"en\">Right Join</span>. אילו היו הופכים את הסדר ומגדירים <span class=\"en\">Left Join</span> — מה היה קורה?</p>\n    <p style=\"margin-top:.35rem\">התשובה: <strong>התוצאה זהה לחלוטין</strong>. סדר העמודות אולי ייראה אחר, אבל <strong>השורות והערכים זהים</strong>. <span class=\"en\">Right Join</span> נוצר בעיקר מטעמי <em>נוחות</em> — כדי לא לאלץ משתמשים לגרור מחדש אם טעו בסדר.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ Inner Join עם שדה מקשר שגוי</span>\n    <p>קישרתם בטעות \"שם העובד\" ל\"מספר רישוי\". אף שם לא זהה למספר רישוי. <span class=\"en\">Inner Join</span> — מה מתקבל?</p>\n    <p style=\"margin-top:.4rem\">התשובה: <strong>טבלה ריקה לחלוטין — 0 שורות</strong>. <span class=\"en\">Inner Join</span> אכזרי ודורש התאמה מלאה; תנאי שקר → אפס התאמות → קנבס ריק.<br>\n    <span style=\"font-size:.9em;color:var(--ink-soft)\">לא הודעת שגיאה · לא <span class=\"en\">Null</span> · לא מכפלה קרטזית</span></p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">זיהוי לפי ניסוח</span>\n    <p>המנהל אומר: <em>\"אני רוצה כל מוצר שקיים (גם בלי יעד), <strong>וגם</strong> את כל יעדי המכירות (גם בלי מוצר). <strong>אסור שאף נתון ייזרק!</strong>\"</em></p>\n    <p style=\"margin-top:.4rem\">\"כל... <strong>וגם</strong> כל... ואסור שייזרק\" = <strong>Full Outer Join</strong>, תמיד.</p>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">מאגר תרחישי JOIN נפוצים</span>\n    <div class=\"scroll\">\n    <table style=\"margin:.4rem 0\">\n      <thead><tr><th>השאלה</th><th>התשובה</th></tr></thead>\n      <tbody>\n        <tr><td>מהי מטרת ה-<span class=\"en\">Join</span>?</td><td>לשלב מידע ממקורות שונים <strong>לכדי מקור מידע מאוחד</strong></td></tr>\n        <tr><td>איזה <span class=\"en\">Join</span> מציג את כל ערכי הטבלה <strong>השמאלית</strong> גם בלי התאמה בימנית?</td><td><strong>Left Join</strong></td></tr>\n        <tr><td>ב-<span class=\"en\">Left Join</span>, מה קורה לערכים ללא התאמה בטבלה הימנית?</td><td>ערכים ריקים — <strong>Null</strong> — יופיעו בשדות החסרים<br><span style=\"font-size:.88em;color:var(--drop)\">לא מושמטים · לא מוכפלים</span></td></tr>\n        <tr><td>מה היתרון ב-<span class=\"en\">Full Outer Join</span>?</td><td>מציג את <strong>כל</strong> הערכים מכל אחת מהטבלאות, <strong>גם אם אין התאמה</strong></td></tr>\n        <tr><td>באיזה כלי משלבים טבלאות על סמך <strong>שדות מזהים משותפים</strong>?</td><td><strong>Joins</strong><br><span style=\"font-size:.88em;color:var(--drop)\">לא Filters · לא Groups · לא Sets</span></td></tr>\n        <tr><td>איזו טענה על <span class=\"en\">Joins</span> נכונה?</td><td>מאפשרים לשלב מידע ממקורות שונים למקור אחד מאוחד<br><span style=\"font-size:.88em;color:var(--drop)\">לא מוגבל לשדות טקסטואליים בלבד ולא למספריים בלבד</span></td></tr>\n      </tbody>\n    </table>\n    </div>\n  </div>", "<div class=\"box must\">\n    <span class=\"box-label\">★ שני סוגי השאלות — לפי המרצה</span>\n    <ol class=\"steps\" style=\"margin:.4rem 0\">\n      <li><strong>שאלות בסיסיות</strong> — על המושגים ותפקידם, ממש ברמת ההגדרה (<span class=\"en\">Rows</span>, <span class=\"en\">Columns</span>, <span class=\"en\">Join</span>). <em>רמת קושי קלה יחסית.</em></li>\n      <li><strong>שאלות \"סיפוריות\" או גרפיות</strong> — פסקה שמתארת אירוע, או צילום מסך של גרף. המטרה: לזהות <strong>כיצד להגיע ליעד באמצעות הכלים שנלמדו</strong>.</li>\n    </ol>\n  </div>\n\n  <div class=\"box must\">\n    <span class=\"box-label\">★ כלל הפסילה — הכי שימושי במבחן אמריקאי</span>\n    <p>ציטוט מהמרצה:</p>\n    <p style=\"margin-top:.4rem\"><em>\"אם נתקלתם בהיגד המשקף פונקציה או דרך פעולה <strong>שלא הוזכרה במפגשים</strong> — היא לא תהיה התשובה המתאימה.\"</em></p>\n    <p style=\"margin-top:.6rem;border-top:1px dashed var(--rule);padding-top:.55rem\">כלומר: מסיח שמתאר כלי או מסך שלא ראיתם בקורס — <strong>פוסלים מיד</strong>. ענו תמיד <strong>לפי ההקשר שבו הכלי נלמד</strong>, לא לפי מה שאולי אפשרי טכנית ב-<span class=\"en\">Tableau</span>.</p>\n  </div>\n\n  <div class=\"box trap\">\n    <span class=\"box-label\">⚠ סגנון המסיחים במבחן</span>\n    <ul style=\"margin:.3rem 0\">\n      <li>יש <strong>מסיחי ג׳יבריש</strong> מכוונים (\"מלפפון חמוץ הלך לישון\", \"אכלו פירות לרוב\") — <strong>מתעלמים</strong>. הם רק מקטינים את מרחב הבחירה האמיתי.</li>\n      <li><strong>\"כל התשובות שגויות\"</strong> ו<strong>\"תשובות א׳ ו-ג׳ נכונות\"</strong> הן תשובות נכונות לגיטימיות — אל תניחו שתמיד יש בדיוק מסיח אחד נכון.</li>\n      <li>המבחן <strong>ידני, לא על מחשב</strong>, וכולו אמריקאי. מותר מחשבון, אך לא יישאלו שאלות מתמטיות.</li>\n    </ul>\n  </div>\n\n  <div class=\"box\">\n    <span class=\"box-label\">איך להשתמש בכלי הזה</span>\n    <p>בכל טאב: קראו קודם את <strong>חלק א׳ (הסיכום)</strong>, ואז פתרו את <strong>חלק ב׳ (השאלות)</strong> על אותו נושא. כשאתם מרגישים בטוחים — עברו ל<strong>מצב \"מבחן מלא\"</strong> למעלה: 20 שאלות אקראיות בתנאי מבחן אמיתיים, עם סדר שאלות ותשובות שמשתנה בכל פעם.</p>\n  </div>", "<ul class=\"check\">\n    <li>ההגדרה הפורמלית של <span class=\"en\">BI</span> — \"מערך של טכנולוגיות, תהליכים, ארכיטקטורות ומערכות\"</li>\n    <li>3 מאפייני <span class=\"en\">Actionable Insight</span> — לדקלם בעל פה</li>\n    <li><span class=\"en\">DIKW</span> — 4 שלבים בעברית ובאנגלית, ולסווג דוגמאות</li>\n    <li>ארכיטקטורת <span class=\"en\">BI</span> — 5 התחנות לפי הסדר, כולל הדוגמאות</li>\n    <li>שכבה סמנטית — אנלוגיית התפריט (\"שניצל ביתי\")</li>\n    <li>דוגמת הבנק — מה <span class=\"en\">Frontend</span> ומה <span class=\"en\">Backend</span></li>\n    <li><span class=\"en\">OLTP</span>=ERP=SAP/Priority · <span class=\"en\">OLAP</span>=BI=Tableau/Power BI</li>\n    <li><span class=\"en\">ETL</span> (עיבוד לפני) מול <span class=\"en\">ELT</span> (עיבוד אחרי, <span class=\"en\">Snowflake</span>)</li>\n    <li><span class=\"en\">Warehouse</span>=מובנה · <span class=\"en\">Lake</span>=לא מובנה · <span class=\"en\">Lakehouse</span>=שילוב</li>\n    <li><span class=\"en\">AOV</span> ו-<span class=\"en\">Churn Rate</span> — ההגדרות המדויקות</li>\n    <li><span class=\"en\">BRD</span> — 5 רכיבים <strong>לפי הסדר</strong></li>\n    <li><span class=\"en\">Top-Down</span> = יעדים תחילה</li>\n    <li>4 סוגי <span class=\"en\">JOIN</span> — דוגמת אבי/בני/גדי/A102: <strong>2 · 3 · 3 · 4 שורות</strong></li>\n    <li>ספירת שורות: <span class=\"en\">Inner</span>=התאמות · <span class=\"en\">Full Outer</span>=התאמות+יתומים משני הצדדים</li>\n    <li>⭐ הכפלת שורות ב-<span class=\"en\">One-to-Many</span> — 1 עובד × 3 רשומות = <strong>3 שורות</strong></li>\n    <li><span class=\"en\">Right Join</span> הפוך = <span class=\"en\">Left Join</span> — תוצאה זהה לחלוטין</li>\n    <li>ב-<span class=\"en\">Left Join</span> הטבלה הימנית היא \"האורחת\" — יתומים מימין נזרקים</li>\n    <li><span class=\"en\">Join</span> = טבלה אחת מאוחדת, <strong>לא</strong> קשר רילציוני</li>\n    <li><span class=\"en\">Years</span> רציף ← קו · <span class=\"en\">Years</span> בדיד ← עמודות</li>\n    <li>מדד מול ממד — מבחן \"מי קובע את הערך?\"</li>\n    <li><span class=\"en\">Pages</span> (פילוח על אותו תרשים) מול <span class=\"en\">Columns/Rows</span> (תרשימים נוספים)</li>\n    <li>כלל הצירים: אנכי ← <span class=\"en\">Rows</span> · אופקי ← <span class=\"en\">Columns</span>. לקרוא לאט, הם הופכים בכוונה</li>\n    <li>פילוח בצבע = גרירת המשתנה ל-<span class=\"en\">Marks</span> ואז <span class=\"en\">Color</span></li>\n    <li>כלל הפסילה: כלי שלא נלמד בקורס = לא התשובה</li>\n    <li>\"כל התשובות שגויות\" ו-\"א׳ ו-ג׳ נכונות\" — תשובות לגיטימיות</li>\n    <li><span class=\"en\">API</span> = מגדיר איזה מידע לבקש ובאיזה פורמט</li>\n    <li><span class=\"en\">GAS</span> = מדמה שרת, לא שרת. 4 יתרונות ו-3 חסרונות</li>\n    <li>תהליך <span class=\"en\">GitHub Pages</span>: <span class=\"en\">Repo</span> ← <code>index.html</code> ← <span class=\"en\">Commit</span> ← <span class=\"en\">Settings▸Pages▸Main▸Save</span></li>\n  </ul>"];
+const META = [["Tableau — בסיס", 0, "צירים · Marks · רציף/בדיד · מדד מול ממד", 4], ["Pages · Filters · Dashboard", 1, "פילוח · סינון · תוצר ללקוח", 1], ["GitHub Pages", 2, "תהליך הפרסום מקצה לקצה", 2], ["Frontend · Backend · GAS", 3, "דוגמת הבנק · API · GAS · Fallback", 4], ["בינה עסקית", 4, "DIKW · OLTP/OLAP · ארכיטקטורה · KPI · BRD", 6], ["JOIN", 5, "ארבעת הסוגים · ספירת שורות · הכפלה", 3]];
+const BANK = [
+  {
+    name:"Tableau — בסיס", weight:"4 שאלות",
+    blurb:"צירים, Marks, רציף/בדיד, מדד מול ממד, מסך Data Source.",
+    qs:[
+      {
+        lvl:"easy",
+        q:"מהי גרסת ה-Tableau שבה השתמשנו בקורס?",
+        o:["Tableau Enterprise, שמתמקדת בוויזואליזציה",
+           "Tableau Professional, המיועדת לתלמידי מערכות מידע",
+           "Tableau Public — גרסה חינמית, עם הכלים המרכזיים הנדרשים",
+           "Tableau Academic, גרסה אקדמית מוגבלת בזמן",
+           "כל התשובות שגויות"],
+        a:2,
+        why:"<b>Tableau Public</b> — חינמי, והשיתוף מתבצע דרך אתר Tableau Public. Desktop היא הגרסה בתשלום. שאר השמות פשוט לא קיימים בקורס — וזכרו את <b>כלל הפסילה</b>: כלי שלא הוזכר במפגשים לא יהיה התשובה."
+      },
+      {
+        lvl:"easy",
+        q:"כאשר מחברים קובץ CSV ל-Tableau, באיזו אפשרות נבחר בתפריט Connect?",
+        o:["Excel","Text","JSON","PDF","כל התשובות שגויות"],
+        a:1,
+        why:"קובצי <code>.csv</code> הם <b>קובצי טקסט במהות</b>, ולכן נבחר <b>Text File</b>. את <span class='en'>Excel</span> נבחר לקבצי <code>.xlsx</code>. על JSON ו-PDF לא נשאל בכלל."
+      },
+      {
+        lvl:"mid",
+        q:"מה המשמעות של משתנה מסוג Continuous (רציף)?",
+        o:["הוא מוצג תמיד כטקסט",
+           "הערכים רציפים, ללא הפרדה נקודתית בין ערכיהם",
+           "הערכים הם שלמים בלבד",
+           "הערכים הם שליליים בלבד",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"זו ההגדרה המדויקת. המשמעות המעשית: כשהמשתנה <b>רציף</b>, התוכנה מנתחת אותו באופן רציף על פני זמן — ולכן מתקבל <b>תרשים קו</b>. שינוי ל-<span class='en'>Discrete</span> (בדיד) ← <b>תרשים עמודות</b>."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>ב-Data Set קיימים נתוני מכירות של מכשירים בשנים 2017-2024. נדרש תרשים שמציג את השנים על הציר האופקי, ואת היקף המכירות בכל שנה על הציר האנכי.</span>מהי הפעולה המתאימה?",
+        o:["גרירת Sales ל-Rows, וגרירת Years ל-Columns",
+           "גרירת Sales ל-Columns, וגרירת Years ל-Rows",
+           "גרירת Sales ל-Columns, וגרירת Years ל-Marks",
+           "גרירת Sales ל-Marks, וגרירת Years ל-Rows",
+           "כל התשובות שגויות"],
+        a:0,
+        why:"<b>הכלל שחוזר הכי הרבה במבחן:</b> ערכים על הציר <b>האנכי</b> ← <span class='en'>Rows</span>. ערכים על הציר <b>האופקי</b> ← <span class='en'>Columns</span>.<br>כאן: מכירות על האנכי = <span class='en'>Rows</span>; שנים על האופקי = <span class='en'>Columns</span>. תמיד שאלו <i>קודם</i> מה על כל ציר — ורק אז בחרו."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>Data Set של מכירות מכשירים בשנים 2017-2024. הפעם נדרש: השנים על הציר האנכי, המכירות על הציר האופקי, ובנוסף — פילוח בצבעים בתוך כל עמודה לפי סוג מוצר.</span>אילו גרירות נדרשות?",
+        o:["Years ל-Columns, Sales ל-Rows, Product Type ל-Marks",
+           "Years ל-Rows, Sales ל-Columns, Product Type ל-Marks",
+           "Years ל-Rows, Sales ל-Columns, Product Type ל-Filters",
+           "Years ל-Rows, Sales ל-Marks, Product Type ל-Columns",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"<b>שימו לב — קל להתבלבל בין שני הצירים.</b> כאן השנים על ה<b>אנכי</b> והמכירות על ה<b>אופקי</b>. תמיד שאלו קודם מה על כל ציר.<br>אנכי = <span class='en'>Rows</span> = שנים · אופקי = <span class='en'>Columns</span> = מכירות · פילוח בצבע <i>בתוך</i> התרשים = <b>Marks</b>."
+      },
+      {
+        lvl:"mid",
+        q:"בתרשים שבו השורות מוגדרות כשנים והעמודות כהיקף מכירות — איזו פעולה תוסיף פילוח לפי ז׳אנר?",
+        o:["גרירת Genre ל-Marks",
+           "גרירת Genre ל-Filters",
+           "גרירת Genre ל-Rows",
+           "גרירת Genre ל-Columns",
+           "כל התשובות שגויות"],
+        a:0,
+        why:"<b>הכלל:</b> פילוח ש<i>לא</i> יוצר תרשים נוסף, אלא מרחיב תרשים קיים = <b>Marks</b> (ואז בוחרים <span class='en'>Color</span>).<br>גרירה ל-<span class='en'>Rows/Columns</span> הייתה יוצרת תרשימים <i>נוספים</i>. <span class='en'>Filters</span> היה <i>מסנן החוצה</i> נתונים — לא מפלח."
+      },
+      {
+        lvl:"hard",
+        noshuffle:true,
+        q:"<span class='scenario'>תרשים עמודות של כמויות משקעים לפי שנים. המנהלת רוצה שהשינויים יוצגו בתרשים קו במקום.</span>מהו הכלי הרלוונטי?",
+        o:["שינוי סוג התרשים באמצעות תיבת Marks",
+           "שינוי סוג התרשים באמצעות Quick Table Calculation",
+           "שינוי ערכי השנים למשתנה רציף (Continuous)",
+           "החלפת השורה והעמודה",
+           "התשובות א׳ ו-ג׳ נכונות"],
+        a:4,
+        why:"<b>שאלה חשובה — מלכודת ה-\"שתי תשובות נכונות\".</b> יש <b>שתי דרכים</b> לשנות סוג תרשים, ושתיהן נכונות:<br>• <b>Marks</b> — בוחרים <span class='en'>Line</span> במקום <span class='en'>Bar</span>.<br>• <b>Continuous</b> — שינוי המשתנה למשתנה רציף, והתרשים ישתנה לקו <i>גם אם Marks נשאר על Automatic</i>.<br><b>הלקח:</b> אם רואים מסיח Marks ומסיח Continuous באותה שאלה — <b>בדקו אם יש אפשרות \"שתיהן\"</b> לפני שבוחרים אחת."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>חברה מתעדת: שנת השקת המוצר, קטגוריית המוצר, וסכום המכירה לכל עסקה.</span>אילו מהשדות הם מדדים (Measures)?",
+        o:["שנת ההשקה בלבד",
+           "קטגוריית המוצר בלבד",
+           "סכום המכירה בלבד",
+           "שנת ההשקה וקטגוריית המוצר",
+           "כל השדות הם מדדים"],
+        a:2,
+        why:"<b>המבחן הלוגי:</b> \"מי בסופו של יום קובע את עצם קיום הערך?\"<br>• <b>גורם חיצוני</b> קובע ← <b>מדד</b>. הלקוח קובע כמה קונה ובאיזה סכום ← סכום המכירה = מדד.<br>• <b>החברה / ערך נתון</b> ← <b>ממד</b>. שנת ההשקה וקטגוריית המוצר נקבעות ע\"י החברה ← ממדים."
+      },
+      {
+        lvl:"easy",
+        q:"בגרירת שדה מספרי לציר, מהי ברירת המחדל של Tableau?",
+        o:["התוכנה מבקשת מהמשתמש להגדיר את סוג החישוב",
+           "התוכנה מבצעת ברוב המקרים Sum באופן אוטומטי",
+           "התוכנה מציגה את הערך הראשון בלבד",
+           "התוכנה מבצעת תמיד ממוצע",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"התוכנה <b>\"מנחשת\"</b> מה הכי הגיוני לחשב — במחברת היא הסיקה <b>סך מכירות</b> בכל שנה. אפשר לשנות לממוצע, ספירה וכו׳. באותו אופן היא מנחשת גם את <b>סוג התרשים</b> כשה-<span class='en'>Marks</span> על <span class='en'>Automatic</span>."
+      },
+      {
+        lvl:"easy",
+        q:"שינוי נתונים בתוך Tableau — מה קורה לקובץ המקור?",
+        o:["הקובץ מתעדכן אוטומטית",
+           "הקובץ נמחק",
+           "קובץ המקור אינו משתנה",
+           "נוצר קובץ מקור חדש",
+           "תלוי אם מדובר ב-CSV או Excel"],
+        a:2,
+        why:"<b>עקרון ההפרדה:</b> שינוי נתונים ב-<span class='en'>Tableau</span> <b>אינו משנה את קובץ המקור</b>. זה נכון לכל סוגי הקבצים."
+      }
+    ]
+  },
+  {
+    name:"Pages · Filters · Dashboard", weight:"שאלה 1",
+    blurb:"ההבדל בין Pages ל-Rows/Columns, סינון, ודשבורד.",
+    qs:[
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>קיים תרשים של מכירות על פני שנים. רוצים לאפשר \"דפדוף\" בין קטגוריות מוצר — כך שכל לחיצה תציג את התרשים עבור קטגוריה אחרת, באותו תרשים.</span>לאן נגרור את משתנה הקטגוריה?",
+        o:["ל-Columns","ל-Rows","ל-Pages","ל-Filters","ל-Marks"],
+        a:2,
+        why:"<b>ההבחנה המרכזית:</b><br>• גרירה ל-<span class='en'>Columns/Rows</span> ← נוצרים <b>תרשימים נוספים</b> באותו מסך.<br>• גרירה ל-<b>Pages</b> ← <b>פילוח על אותו תרשים</b>, עם תפריט דפדוף שנפתח אוטומטית מצד ימין (חיצים ימינה/שמאלה)."
+      },
+      {
+        lvl:"mid",
+        q:"מה קורה לערכים שסוננו החוצה באמצעות Filters?",
+        o:["הם מוצגים באפור בתרשים",
+           "הם מוסתרים ולא נכללים בתרשים",
+           "הם מקובצים לקטגוריה בשם Other",
+           "הם מוצגים כערכי Null",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"הערכים המסוננים <b>מוסתרים ולא נכללים</b> — התרשים יתייחס <b>רק</b> לערכים שנותרו. ההגדרה גמישה: טווח, ערכים נקודתיים, או כללים מתקדמים (<span class='en'>Top/Bottom</span> לפי שדה)."
+      },
+      {
+        lvl:"easy",
+        q:"מהי מטרת ה-Dashboard ב-Tableau?",
+        o:["לשנות את סוג התרשים הקיים",
+           "לרכז במסך אחד את התרשימים והתובנות הרלוונטיים ללקוח",
+           "לסנן נתונים לא רלוונטיים",
+           "לאחד מספר טבלאות לטבלה אחת",
+           "לחשב שדות חדשים"],
+        a:1,
+        why:"<b>הדשבורד הוא \"התוצר ללקוח\"</b> — מרכז תרשימים מ-<span class='en'>Sheets</span> שונים, <b>וגם רכיבים נוספים</b> (קישורים, צורות, תמונות). מומלץ להגדיר <b>Size ← Automatic</b> כדי לנצל את כל המסך.<br>אם רוצים <i>לשנות</i> תרשים — עושים זאת ב-<span class='en'>Sheet</span> עצמו, לא בדשבורד."
+      }
+    ]
+  },
+  {
+    name:"GitHub Pages", weight:"2 שאלות",
+    blurb:"תהליך הפרסום מ-Tableau ועד אתר חי.",
+    qs:[
+      {
+        lvl:"mid",
+        q:"מהו הסדר הנכון בתהליך פרסום הדשבורד?",
+        o:["יצירת Repository ← בניית גרפים ← שמירה ל-Tableau Public ← Commit",
+           "חיבור נתונים ← גרפים ← Dashboard ← שמירה ל-Tableau Public ← העתקת קישור ← יצירת HTML ← Repository ← index.html ← Commit ← Settings▸Pages",
+           "חיבור נתונים ← יצירת index.html ← בניית גרפים ← Dashboard",
+           "יצירת HTML ← חיבור נתונים ← Dashboard ← Commit",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"קודם <b>בונים ב-Tableau</b> (נתונים ← גרפים ← דשבורד), אז <b>שומרים ל-Tableau Public</b> ומעתיקים את הקישור, ורק אז עוברים ל-<span class='en'>GitHub</span>: מבקשים מ-<b>AI</b> קוד <span class='en'>HTML</span> שמטמיע את הקישור, יוצרים <span class='en'>Repository</span>, בתוכו <code>index.html</code>, מדביקים, ו<b>שומרים = Commit</b>."
+      },
+      {
+        lvl:"easy",
+        q:"כיצד מפעילים את GitHub Pages לאחר שהקובץ הועלה?",
+        o:["Settings ▸ Pages ▸ Branch (Main) ▸ Save",
+           "Code ▸ Deploy ▸ Publish",
+           "Actions ▸ Run Workflow",
+           "Insights ▸ Pages ▸ Enable",
+           "התהליך אוטומטי ואין צורך בפעולה"],
+        a:0,
+        why:"<b>Settings ▸ Pages ▸ Branch (Main) ▸ Save</b>. שמירת השינויים בקובץ עצמו נקראת <b>Commit</b> — פעולה נפרדת שקודמת לכך."
+      },
+      {
+        lvl:"easy",
+        q:"מהי הדרך לייצר קישור לדשבורד שניתן להטמיע באתר?",
+        o:["ייצוא הדשבורד כקובץ PDF",
+           "צילום מסך של הדשבורד",
+           "File ▸ Save to Tableau Public, ואז העתקת הקישור",
+           "העתקת נתיב הקובץ מהמחשב",
+           "שליחת הקובץ במייל"],
+        a:2,
+        why:"שמירה ל-<b>Tableau Public</b> יוצרת גרסה בענן, ומשם כפתור השיתוף נותן קישור להעתקה או להטמעה. זו כל המטרה של <span class='en'>Publish</span>."
+      }
+    ]
+  },
+  {
+    name:"Frontend · Backend · GAS", weight:"4 שאלות",
+    blurb:"דוגמת הבנק, API, GAS, זרימת עבודה ו-Fallback.",
+    qs:[
+      {
+        lvl:"easy",
+        q:"<span class='scenario'>משתמש לוחץ על \"בדוק יתרה\" באפליקציית הבנק.</span>מה מהבאים מתרחש ב-Backend?",
+        o:["הצגת אנימציה של כפתור לחוץ",
+           "שינוי צבע הרקע של הדף",
+           "שליפת היתרה ממסד הנתונים ואימות הזהות",
+           "הצגת מספר היתרה על המסך",
+           "עיצוב הלוגו של הבנק"],
+        a:2,
+        why:"<b>דוגמת הבנק — חובה לדעת.</b><br>• <b>Frontend</b> (מה שרואים): עיצוב, לוגו, טופס כניסה, גרף היתרה, רשימת עסקאות.<br>• <b>Backend</b> (מאחורי הקלעים): אימות סיסמה מול ה-<span class='en'>DB</span>, שליפת היתרה, חישוב ריבית, הצפנה.<br>אנימציה, צבע והצגה על מסך = תמיד <b>Frontend</b>."
+      },
+      {
+        lvl:"mid",
+        q:"מהי ההגדרה של API?",
+        o:["מסד הנתונים שמאחסן את המידע",
+           "שפת התכנות שבה נכתב ה-Backend",
+           "החיבור בין Frontend ל-Backend, שמגדיר איזה מידע ניתן לבקש ובאיזה פורמט מקבלים אותו",
+           "העיצוב הגרפי של הממשק",
+           "כלי לאחסון קבצים בענן"],
+        a:2,
+        why:"<b>Application Programming Interface</b> — דרך מקובלת לחבר את ה-<span class='en'>Frontend</span> לנתונים.<br><b>האנלוגיה למסעדה:</b> אתם <i>לא נכנסים למטבח</i> (<span class='en'>Backend</span>), אלא מזמינים ממה שבתפריט (<span class='en'>API</span>) ומקבלים את האוכל (<span class='en'>Response</span>)."
+      },
+      {
+        lvl:"mid",
+        q:"כיצד Google Apps Script מדמה Backend?",
+        o:["הוא מתקין שרת Node.js על מחשב המשתמש",
+           "הוא פורס קוד על שרתי גוגל וחושף URL ציבורי (Web App) שמקבל בקשות",
+           "הוא פועל בתוך הדפדפן כמו JavaScript רגיל",
+           "הוא מחייב שרת Apache מקומי",
+           "הוא אינו מדמה Backend כלל"],
+        a:1,
+        why:"הקוד רץ <b>על שרתי גוגל</b> — לא על מחשב המשתמש. וזכרו את המשפט המדויק: <b>GAS מדמה שרת, אך איננו שרת בעצמו.</b>"
+      },
+      {
+        lvl:"mid",
+        q:"איזו מהבאות היא <b>מגבלה</b> של GAS, ולא יתרון?",
+        o:["חינמי","לא דורש הגדרת שרת","אינטגרציה עם Google Sheets","מוגבל בעומסים שניתן לנתב אליו","פריסה בלחיצה אחת (Deploy)"],
+        a:3,
+        why:"<b>יתרונות:</b> חינמי · לא דורש הגדרת שרת · מחובר ל-<span class='en'>Google Sheets</span> · פריסה בלחיצה אחת (<span class='en'>Deploy</span>) ברמת ה-<span class='en'>Web App</span>.<br><b>מגבלות:</b> מוגבל ל-<span class='en'>Google</span> · מוגבל בעומסים (פחות מתאים ליישומים המוניים) · פחות גמישות."
+      },
+      {
+        lvl:"mid",
+        q:"מהו הסדר הנכון של זרימת העבודה באפליקציה שנבנתה ב-GAS?",
+        o:["שליפה מהשרת ← הזנת קלט ← בדיקת תקינות ← הצגה",
+           "הזנת קלט ← בדיקת תקינות הקלט ← שימוש בשרת GAS לשליפה ועיבוד ← הצגת המידע",
+           "בדיקת תקינות ← הזנת קלט ← הצגה ← שליפה",
+           "הזנת קלט ← הצגה ← בדיקת תקינות ← שליפה",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"בודקים את הקלט <b>לפני</b> שפונים לשרת — כך חוסכים זמן ומשאבים. הסדר: <b>קלט ← ולידציה ← שרת (שליפה ועיבוד) ← הצגה</b>."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>מערכת משתמשת במקור נתונים ראשי, ובמקור גיבוי (Fallback) אם הראשי נכשל. עבור פריט מסוים — שני המקורות נכשלו.</span>מה יקרה במערכת בנויה נכון?",
+        o:["המערכת תקרוס ותחזיר שגיאה לכל הפריטים",
+           "הפריט יוצג עם ערכי 0 בכל התאריכים",
+           "השגיאה תיתפס, תוחזר הודעה ספציפית לאותו פריט בלבד, ושאר הפריטים ימשיכו לעבוד",
+           "המערכת תפנה אוטומטית לשרת שלישי",
+           "כל התשובות שגויות"],
+        a:2,
+        why:"<b>עקרון ה-Fallback:</b> אם לא ניתן לשלוף נתון ממקור מסוים — פונים למקור אחר.<br>ואם גם הגיבוי נכשל: <b>שגיאה ברמת פריט אחד לא מפילה את הבקשה כולה</b>. המערכת לא קורסת, לא ממציאה אפסים, ולא \"מוצאת\" מקור שלישי שלא הוגדר."
+      },
+      {
+        lvl:"easy",
+        q:"על מה מבוסס ה-Frontend שלנו, והיכן הוא רץ?",
+        o:["מבוסס HTML, ורץ בדפדפן","מבוסס SQL, ורץ על השרת","מבוסס Python, ורץ בענן","מבוסס Google Sheets, ורץ ב-Drive","כל התשובות שגויות"],
+        a:0,
+        why:"אצלנו ה-<span class='en'>Frontend</span> מבוסס <b>HTML</b>, רץ <b>בדפדפן</b>, ומוצג דרך <span class='en'>GitHub Pages</span>. אין צורך להכיר <span class='en'>CSS</span> ו-<span class='en'>JavaScript</span> בהקשר זה."
+      }
+    ]
+  },
+  {
+    name:"בינה עסקית — תיאוריה", weight:"5 שאלות",
+    blurb:"הגדרת BI, Actionable Insights, DIKW, OLTP/OLAP, ארכיטקטורה, KPI, BRD.",
+    qs:[
+      {
+        lvl:"easy",
+        q:"מהי ההגדרה הנכונה ביותר של Business Intelligence?",
+        o:["תוכנה לייצוא גרפים ממערכות ERP",
+           "מערך טכנולוגיות, תהליכים וארכיטקטורות שממיר נתונים גולמיים לתובנות מניעות-פעולה לצורך קבלת החלטות ניהוליות",
+           "מערכת להזנת נתונים חשבונאיים בזמן אמת",
+           "אלגוריתם בינה מלאכותית לחיזוי מחירי מניות",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"זו ההגדרה הפורמלית. <span class='en'>BI</span> הוא <b>מערך כולל</b> — לא כלי אחד, ולא מוגבל להזנה או לגרפים בלבד. מטרת העל: <b>לתמוך ולשפר את איכות קבלת ההחלטות הניהוליות בארגון</b>."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>מנהל מוצר מקבל דוח: \"זמן הכניסה הממוצע של משתמשים חדשים הוא 3.2 שניות\".</span>איזו מהאפשרויות מהווה Actionable Insight אמיתי?",
+        o:["\"זמן כניסה ממוצע: 3.2 שניות\" — הנתון הגולמי",
+           "\"יש לשפר את ביצועי השרת בכלל\"",
+           "\"משתמשים שזמן הכניסה שלהם עולה על 4 שניות נוטשים ב-68% בשבוע הראשון — יש לאופטימז את ה-Onboarding לקהל הזה\"",
+           "\"זמן הכניסה הוא בינוני בהשוואה לתעשייה\"",
+           "כל התשובות נכונות"],
+        a:2,
+        why:"<b>שלושת המאפיינים:</b> <b>ספציפית</b> (מי מושפע) · <b>ברת-ביצוע</b> (מה לעשות) · <b>מבוססת ראיות</b> (נתוני נטישה).<br>א׳ ו-ד׳ מתארים <i>מה קרה</i> ולא מה לעשות. ב׳ נכשל בספציפיות — \"בכלל\" זו לא בעיה קונקרטית."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>\"הפדיון הממוצע בשולחנות משפחתיים בימי שלישי נמוך ב-30% משאר השבוע\"</span>באיזו רמה בפירמידת DIKW מדובר?",
+        o:["Data — נתון","Information — מידע","Knowledge — ידע","Wisdom — בינה","זהו Actionable Insight מלא"],
+        a:2,
+        why:"זיהוי <b>תבנית/מגמה</b> = <b>Knowledge</b>. הפירמידה:<br>• <b>Data</b> — \"1200\" (עובדה גולמית חסרת הקשר)<br>• <b>Information</b> — \"1,200 ₪ פדיון לשולחן #4 ב-31/12\" (הקשר ומשמעות)<br>• <b>Knowledge</b> — התבנית הזו<br>• <b>Wisdom</b> — \"נשיק מבצע ארוחות ילדים חינם ביום שלישי\" (פעולה!)"
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>מנהל רכש מזין חשבונית ספק ל-SAP. במקביל, מנהלת שיווק בוחנת דשבורד Tableau עם מגמת עלויות ב-24 חודשים.</span>מה מאפיין כל מערכת?",
+        o:["שתיהן OLAP","SAP = OLTP, Tableau = OLAP","שתיהן OLTP","Tableau = OLTP, SAP = OLAP","אין קשר בין המערכות לסיווג זה"],
+        a:1,
+        why:"הזנת חשבונית = <b>פעולה יחידה ומהירה</b> = <span class='en'>OLTP</span> (<i>Online Transaction Processing</i>) — עולם ה-<span class='en'>ERP</span>.<br>ניתוח מגמות היסטוריות = <span class='en'>OLAP</span> (<i>Online Analytical Processing</i>) — עולם ה-<span class='en'>BI</span>.<br>זכרו: <b>OLAP היא התשתית למערכות BI</b>."
+      },
+      {
+        lvl:"mid",
+        q:"מהו ההבדל בין ETL ל-ELT?",
+        o:["ETL מודרני יותר, ELT מסורתי",
+           "ב-ETL העיבוד מבוצע טרם הכניסה למחסן; ב-ELT המחסן המודרני מסוגל לטפל בעיבוד בעצמו",
+           "ETL מיועד לנתונים מובנים בלבד",
+           "אין ביניהם הבדל מהותי",
+           "ELT אינו כולל שלב טעינה"],
+        a:1,
+        why:"<b>ETL</b> = מחסנים <b>מסורתיים/קלאסיים</b> — מנקים <i>לפני</i> הטעינה.<br><b>ELT</b> = מחסנים <b>מודרניים</b> — טוענים גולמי, מעבדים <i>בתוך</i> המחסן.<br>השלבים: <b>Extract</b> (שאיבה) ← <b>Transform</b> (ניקוי, איחוד פורמטים, ערכים חסרים) ← <b>Load</b> (אחסון).<br>דוגמה למחסן ELT שצריך להכיר: <b>Snowflake בלבד</b>."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>סטארטאפ רפואי מאחסן: נתוני מכירות מובנים מה-CRM, תמונות MRI, שיחות שירות מוקלטות, ונתוני חיישן.</span>איזו ארכיטקטורה מתאימה ביותר?",
+        o:["Data Warehouse בלבד","Data Lake בלבד","Data Lakehouse — שילוב של השניים","Excel","ERP"],
+        a:2,
+        why:"<b>Warehouse</b> = נתונים <b>מובנים, מסודרים</b>.<br><b>Lake</b> = נתונים <b>לא מובנים</b>, גמישים יותר.<br><b>Lakehouse</b> = <b>שילוב</b>.<br>כאן יש גם מובנה (CRM) וגם לא-מובנה (תמונות, הקלטות, חיישנים) ← <b>Lakehouse</b>."
+      },
+      {
+        lvl:"mid",
+        q:"מהי \"שכבה סמנטית\" (Semantic Layer)?",
+        o:["שכבת אבטחה שמצפינה את הנתונים",
+           "תרגום השמות הטכניים במערכת לשפה עסקית",
+           "שכבת האחסון הפיזי של הנתונים",
+           "תהליך ניקוי הנתונים לפני הטעינה",
+           "כלי הוויזואליזציה עצמו"],
+        a:1,
+        why:"ההגדרה הפורמלית: <b>תרגום השמות הטכניים לשפה עסקית</b>, לטובת תובנות ברורות למקבלי ההחלטות.<br><b>האנלוגיה לתפריט:</b> המנהל לא צריך לדעת שב-<span class='en'>DB</span> יש <code>חומר גלם 4517-B</code> — הוא רואה <b>\"שניצל ביתי\"</b>. כך <code>tbl_trx_2024</code> הופך ל-<b>\"עסקאות 2024\"</b>."
+      },
+      {
+        lvl:"easy",
+        q:"מהו ההבדל בין Tableau ל-Power BI, לפי הנדרש במיקוד?",
+        o:["Tableau קרוס-פלטפורמה; Power BI עובד על Windows בלבד ומשתלב מצוין עם Microsoft Office",
+           "Tableau עובד על Windows בלבד; Power BI קרוס-פלטפורמה",
+           "שניהם עובדים רק על Mac",
+           "Tableau הוא ERP ו-Power BI הוא BI",
+           "אין ביניהם הבדל"],
+        a:0,
+        why:"רק שני המאפיינים האלה נדרשים: <b>Tableau</b> = קרוס-פלטפורמה (מתאים לכל מערכות ההפעלה). <b>Power BI</b> = <span class='en'>Windows</span> בלבד, עם אינטגרציה מעולה ל-<span class='en'>Ecosystem</span> של <span class='en'>Microsoft Office</span>."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>חברת SaaS רוצה לשפר שימור לקוחות.</span>מהו ה-KPI המתאים, ומהי הנוסחה?",
+        o:["AOV = פדיון כולל ÷ מספר עסקאות",
+           "Churn Rate = לקוחות שעזבו ÷ לקוחות בתחילת התקופה",
+           "CAC = הוצאות שיווק ÷ לקוחות חדשים",
+           "NPL Ratio = הלוואות בפיגור ÷ תיק אשראי",
+           "Loss Ratio = סך תביעות ÷ סך פרמיות"],
+        a:1,
+        why:"במיקוד נדרשים <b>רק שני KPIs</b>:<br>• <b>קמעונאות</b> — הגדלת פדיון — <b>AOV</b> (<i>Average Order Value</i>) = פדיון כולל ÷ מספר עסקאות.<br>• <b>SaaS</b> — שימור לקוחות — <b>Churn Rate</b> (שיעור נטישה) = לקוחות שעזבו ÷ לקוחות בתחילת התקופה.<br><span class='en'>CAC</span>, <span class='en'>NPL</span>, <span class='en'>Loss Ratio</span>, <span class='en'>NOI</span> — <b>לא נדרשים</b>."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>מנהל אומר לצוות הנתונים: \"יש לנו המון נתונים — בואו נבנה דשבורד ואז נראה מה אפשר להוציא מזה\".</span>מה הבעיה בגישה זו?",
+        o:["אין בעיה, זו בדיוק מתודולוגיית Top-Down",
+           "זוהי גישת Bottom-Up — המתודולוגיה הנכונה גוזרת את כל המערכת מהגדרת היעדים תחילה",
+           "הבעיה היחידה היא העלות",
+           "צריך קודם לרכוש ERP",
+           "צריך קודם לבחור בין Tableau ל-Power BI"],
+        a:1,
+        why:"<b>Top-Down:</b> יעד עסקי ← שאלות עסקיות ← הגדרת KPIs ← <i>ורק אז</i> פונים למקורות הנתונים ול-IT.<br><b>הטעות הנפוצה</b> בניסוח המקורי: \"יש לנו המון נתונים — בואו נבנה דשבורד!\" ← מוביל לדשבורדים שאף אחד לא משתמש בהם.<br><b>היגדים שמתארים בנייה תחילה ואז שימוש בנתונים — אינם עומדים בהגדרות האפיון של BI.</b>"
+      },
+      {
+        lvl:"mid",
+        q:"מהו מסמך BRD, ואילו רכיבים נדרשים לפי המיקוד?",
+        o:["מסמך טכני למפתחים בלבד; 9 רכיבים",
+           "המסמך המתווך בין השפה העסקית של המנכ\"ל לשפה הטכנית של המפתח; 5 רכיבים: תקציר מנהלים, רקע עסקי, יעדים ו-KPIs, מקורות נתונים, לוח זמנים",
+           "מסמך שיווקי ללקוחות",
+           "דוח כספי רבעוני",
+           "מסמך אבטחת מידע"],
+        a:1,
+        why:"<b>BRD — Business Requirements Document.</b> ההגדרה: <b>המסמך המתווך</b> בין השפה העסקית של המנכ\"ל לבין השפה הטכנית של המפתח.<br>במערך השיעור מופיעים <b>9 רכיבים</b>, אך המיקוד צמצם ל-<b>5 בלבד</b>, <b>וגם הסדר שלהם נדרש</b>."
+      }
+    ]
+  },
+  {
+    name:"JOIN", weight:"3 שאלות",
+    blurb:"ארבעת הסוגים, ספירת שורות, הכפלת שורות ומלכודות.",
+    qs:[
+      {
+        lvl:"easy",
+        q:"לפניכם שלוש טענות:<br>1 — JOIN מאפשר לשלב מידע מטבלאות שונות לכדי טבלה מאוחדת.<br>2 — JOIN דורש שימוש בשדות מזהים משותפים.<br>3 — לעתים JOIN יוצר תוצר המעניק תמונה מקיפה ומלאה יותר.",
+        o:["טענה 1 בלבד","טענה 2 בלבד","טענות 1 ו-2","טענות 2 ו-3","כל הטענות נכונות"],
+        a:4,
+        why:"<b>כל השלוש נכונות.</b> 1 — נכון בהגדרה. 2 — נכון, השדה המזהה הוא <b>ה\"דבק\"</b>. 3 — נכון, טבלה מאוחדת נותנת תמונה מקיפה יותר, במיוחד ליצירת תרשימים.<br><b>הלקח:</b> אל תחפשו את הפסול כשאין."
+      },
+      {
+        lvl:"mid",
+        q:"סמנו את הטענה הנכונה לגבי Full Outer Join:",
+        noshuffle:true,
+        o:["ייכללו רק רשומות שאותר בגינן ערך מזהה בשתי הטבלאות",
+           "אם יושמטו רשומות, הן תהיינה רק מהטבלה הימנית",
+           "לא מושמטות רשומות מהטבלאות ביניהן מבוצע האיחוד",
+           "שקול לביצוע Inner Join",
+           "כל יתר הטענות שגויות"],
+        a:2,
+        why:"<b>הכלל שמארגן הכל:</b> ב-<span class='en'>Outer Join</span> <b>ערכים מושמטים לא יתקיימו לעולם</b> — רק <span class='en'>Null</span>.<br>• א׳ — זה התיאור של <b>Inner</b>.<br>• ב׳ — זה התיאור של <b>Left</b>.<br>• ד׳ — שגוי לחלוטין."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>שתי טבלאות: לקוחות (אבי=1, בני=2, גדי=3 ללא הזמנות) והזמנות (A100←1, A101←2, A102←99 לקוח מחוק).</span>כמה שורות יתקבלו ב-<b>Inner Join</b>?",
+        o:["2","3","4","6","0"],
+        a:0,
+        why:"<b>הדוגמה שמארגנת הכל.</b> <span class='en'>Inner</span> מביא רק התאמות בשתי הטבלאות: אבי ובני = <b>2 שורות</b>. גדי ולקוח 99 <b>נמחקים</b>.<br>ארבע התוצאות לזכור: <b>Inner=2 · Left=3 · Right=3 · Full Outer=4</b>."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>טבלת שכר: 10 שורות. טבלת כתובות: 10 שורות. רק 7 שורות מתאימות בשדה Employee ID; 3 יתומות משמאל ו-3 יתומות מימין (Null).</span>כמה שורות יהיו לאחר <b>Outer Join</b>?",
+        o:["13","7","10","17","כל התשובות שגויות"],
+        a:0,
+        why:"<b>הנוסחה:</b> Full Outer = התאמות + יתומים משמאל + יתומים מימין.<br><b>7 + 3 + 3 = 13</b>.<br>ה-<span class='en'>Outer</span> שומר הכל: 7 שורות מאוחדות, ועוד 3+3 שורות נפרדות עם <span class='en'>Null</span> בצד החסר."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>טבלת שכר: 10 שורות. טבלת כתובות: 10 שורות. רק 7 שורות מתאימות בשדה Employee ID; 3 יתומות משמאל ו-3 יתומות מימין (Null).</span>כמה שורות יהיו לאחר <b>Inner Join</b>?",
+        o:["7","13","12","17","כל התשובות שגויות"],
+        a:0,
+        why:"<span class='en'>Inner Join</span> מחייב <b>התאמה מלאה</b> בשדה המזהה כדי שהרשומה תשרוד. 3 השורות האחרונות בכל טבלה לא מתאימות ← מושמטות. נשארות <b>7 שורות</b> בלבד."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>טבלת \"לקוחות\" (שמאלית) — 100 רשומות. טבלת \"תלונות\" (ימנית) — 20 רשומות, מתוכן 15 מקושרות ללקוחות קיימים, ו-5 אנונימיות ללא מזהה.</span>בוצע <b>Left Join</b>. כמה שורות יופיעו?",
+        o:["15","100","105","120","לא ניתן לדעת"],
+        a:1,
+        why:"<b>כל 100 הלקוחות נשמרים</b> — 15 עם נתוני תלונה, ו-85 עם <span class='en'>Null</span>.<br><b>5 התלונות האנונימיות נזרקות לפח</b> — ב-<span class='en'>Left Join</span> הטבלה הימנית היא <b>\"האורחת\", לא \"בעלת הבית\"</b>.<br>המסיחים 105 ו-120 מפתים בדיוק בגלל זה."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>לעובד \"מתן\" יש רשומה אחת בטבלת העובדים (שמאל), אך 3 רשומות בטבלת הצריכה (ימין).</span>בוצע <b>Inner Join</b>. כמה שורות יכילו את שמו?",
+        o:["1 — כי בטבלה השמאלית הוא מופיע פעם אחת",
+           "3 — הטבלה משכפלת את נתוני העובד לכל שורות הצריכה",
+           "0 — נוצרת שגיאת חוסר איזון והוא נשמט",
+           "4 — חיבור השורה מהשמאלית והשלוש מהימנית",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"<b>הכפלת שורות — One-to-Many.</b> ה-<span class='en'>Join</span> <b>משכפל</b> את פרטי מתן לאורך כל 3 השורות, כדי לא לאבד נתוני צריכה. הליך תקין לגמרי.<br><b>הסכנה המעשית:</b> כשמבצעים <span class='en'>Sum</span> ב-<span class='en'>Tableau</span> — <b>משכורתו של מתן תיספר 3 פעמים</b> בטעות. חייבים להיות מודעים."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>משתמש גרר את Sales ראשונה (שמאל) ואת Products שנייה (ימין), והגדיר Right Join. כעת הוא הופך את הסדר — Products ראשונה, Sales שנייה — ומגדיר Left Join.</span>מה יקרה לתוצאה?",
+        o:["התוצאה תהיה שונה לחלוטין",
+           "התוצאה תהיה זהה לחלוטין מבחינת הרשומות והערכים",
+           "תוצג שגיאת שדות מקשרים",
+           "תלוי אם מוגדר Primary Key",
+           "ב-Tableau לא ניתן לגרור בסדר הפוך"],
+        a:1,
+        why:"<b>לוגיקת קבוצות:</b> \"כל מה שיש ב-B פלוס מה שתואם מ-A\" זה בדיוק אותו דבר בין אם קוראים לזה <span class='en'>Right</span> או הופכים את הסדר וקוראים לזה <span class='en'>Left</span>.<br>סדר העמודות אולי ייראה אחר, אבל <b>השורות והערכים זהים</b>. <span class='en'>Right Join</span> קיים בעיקר <b>מטעמי נוחות</b>."
+      },
+      {
+        lvl:"hard",
+        q:"<span class='scenario'>בטעות קישרתם את שדה \"שם העובד\" לשדה \"מספר רישוי הרכב\". אף שם לא זהה למספר רישוי. הגדרתם Inner Join.</span>מה תהיה התוצאה?",
+        o:["הודעת שגיאה על אי-תאימות סוגי נתונים",
+           "טבלה שכוללת את כל העובדים, עם Null בשדות הרכב",
+           "טבלה מאוחדת ריקה לחלוטין — 0 שורות",
+           "מכפלה קרטזית של כל עובד עם כל רכב",
+           "כל התשובות שגויות"],
+        a:2,
+        why:"<span class='en'>Inner Join</span> <b>אכזרי</b> ודורש התאמה מלאה. הגדרנו תנאי שקר (\"יוסי\" לעולם לא ישווה ל-\"88-123-55\") ← <b>אפס התאמות ← קנבס ריק לחלוטין</b>.<br>לא שגיאה, לא <span class='en'>Null</span>, ולא מכפלה קרטזית."
+      },
+      {
+        lvl:"mid",
+        q:"<span class='scenario'>המנהל דורש: \"אני רוצה לראות כל מוצר שקיים (גם בלי יעד), וגם את כל יעדי המכירות (גם אם לא שויך אליהם מוצר). אסור שאף נתון ייזרק!\"</span>איזה Join מתאים?",
+        o:["Inner Join","Left Join","Right Join","Full Outer Join","Data Blending"],
+        a:3,
+        why:"<b>הניסוח מסגיר את התשובה:</b> \"כל... <b>וגם</b> כל... ואסור שייזרק\" = <b>Full Outer Join</b>, תמיד.<br><span class='en'>Inner</span> היה זורק את המידע החלקי · <span class='en'>Left</span> היה מתעלם מיעדים ללא מוצר · <span class='en'>Right</span> היה מתעלם ממוצרים ללא יעד."
+      },
+      {
+        lvl:"mid",
+        q:"מהו התנאי ההכרחי לביצוע Join בין שתי טבלאות?",
+        o:["שתי הטבלאות חייבות להיות באותו גודל",
+           "קיום שדה מקשר (מזהה) משותף בין הטבלאות",
+           "שתי הטבלאות חייבות להכיל שדות מספריים בלבד",
+           "שתי הטבלאות חייבות להיות בקבצים נפרדים",
+           "אין תנאי — ניתן לאחד כל שתי טבלאות"],
+        a:1,
+        why:"<b>השדה המזהה הוא ה\"דבק\".</b> חיבור בין טבלת הזמנות לטבלת לקוחות יתאפשר <b>רק אם</b> בשתיהן יש שדה \"מספר לקוח\".<br>ולא — <span class='en'>Join</span> <b>אינו</b> מוגבל לשדות טקסטואליים בלבד או מספריים בלבד."
+      },
+      {
+        lvl:"mid",
+        q:"מהי ההבחנה בין Join לבין בסיס נתונים רילציוני, כפי שהוצגה בקורס?",
+        o:["Join יוצר קשר בין טבלאות, בדיוק כמו מודל רילציוני",
+           "Join יוצר טבלה אחת מאוחדת — ולא קשר בין טבלאות",
+           "אין הבדל, מדובר באותו דבר",
+           "Join מתאים רק לבסיסי נתונים רילציוניים",
+           "כל התשובות שגויות"],
+        a:1,
+        why:"<b>הבחנה מפורשת מהמחברת.</b> יש שתי דרכים לצרף טבלאות ב-<span class='en'>Tableau</span>:<br>• <b>\"הדרך ה-SQL-ית\"</b> — בסיס רילציוני, קשרים בין ישויות, מפתחות ← <i>לא עבדנו בדרך הזו</i>.<br>• <b>Join</b> — יצירת <b>טבלה אחת מאוחדת</b> ← <i>בדרך הזו התמקדנו</i>."
+      }
+    ]
+  }
+];
+// Additional complex questions — Tsaban style (statement analysis, "how many are true", "which is most correct")
+// Merged into the main BANK by the build script, appended to each topic's qs[].
+// Each question: {lvl, q, o:[5], a, why, noshuffle?}
+// noshuffle:true REQUIRED whenever an option references a specific letter (א/ב/ג) or "יתר"/"the others".
+
+const EXTRA = {
+  "tableau": [
+    {
+      lvl:"hard", noshuffle:true,
+      q:"לפניכם ארבע טענות על <b>Measures</b> ו-<b>Dimensions</b>. כמה מהן נכונות?<br>1 — סכום מכירה הוא Measure כי גורם חיצוני קובע את ערכו.<br>2 — שנת השקת מוצר היא Dimension.<br>3 — כל שדה מספרי הוא בהכרח Measure.<br>4 — קטגוריית מוצר (Genre) היא Dimension.",
+      o:["טענה אחת בלבד","שתי טענות","שלוש טענות","כל ארבע הטענות","אף טענה"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: לא כל שדה מספרי הוא Measure — שנה למשל היא מספר אבל היא Dimension (החברה קובעת אותה). המבחן הוא <b>\"מי קובע את הערך?\"</b>, לא אם הוא מספרי."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>עובד גרר Sales ל-Rows ו-Category ל-Columns, וקיבל מספר עמודות נפרדות. כעת הוא רוצה שכל קטגוריה תיצבע בצבע שונה, באותו תרשים.</span>איזו פעולה <b>נכונה</b>?",
+      o:["לגרור Category שוב, הפעם ל-Marks ולבחור Color",
+         "לגרור Category ל-Filters",
+         "לגרור Category ל-Pages",
+         "להחליף בין Rows ל-Columns",
+         "אין צורך — הצבעים נוצרים אוטומטית תמיד"],
+      a:0,
+      why:"<b>פילוח בצבע = Marks ← Color.</b> אפשר לגרור את אותו שדה גם ל-Marks בנוסף למיקומו הנוכחי. <span class='en'>Filters</span> היה מסנן, <span class='en'>Pages</span> היה יוצר דפדוף, והחלפת צירים לא נוגעת לצבע."
+    },
+    {
+      lvl:"mid",
+      q:"איזו מהטענות הבאות על <b>Tableau Public</b> היא ה<b>נכונה ביותר</b>?",
+      o:["היא גרסת התשלום המלאה של Tableau",
+         "היא חינמית, והשיתוף נעשה דרך אתר Tableau Public הציבורי",
+         "היא עובדת רק על Windows",
+         "היא אינה מאפשרת חיבור לקובצי CSV",
+         "היא מיועדת אך ורק לסטודנטים"],
+      a:1,
+      why:"<b>Tableau Public חינמית</b>, והעבודות נשמרות ומשותפות דרך האתר הציבורי. <span class='en'>Desktop</span> היא גרסת התשלום. היא קרוס-פלטפורמה ומתחברת ל-<span class='en'>CSV</span> ו-<span class='en'>Excel</span>."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"<span class='scenario'>נתון תרשים קו של הכנסות לפי חודשים. המשתמש טוען: \"אם אשנה את החודשים ממשתנה רציף למשתנה בדיד, התרשים יהפוך לעמודות\".</span>האם הטענה נכונה, ומדוע?",
+      o:["נכונה — משתנה בדיד (Discrete) מוביל לתרשים עמודות",
+         "שגויה — סוג המשתנה לא משפיע על סוג התרשים",
+         "נכונה, אבל רק אם Marks מוגדר Line",
+         "שגויה — צריך למחוק את התרשים ולבנות מחדש",
+         "נכונה, אבל רק בגרסת Desktop"],
+      a:0,
+      why:"<b>נכונה.</b> כשה-<span class='en'>Marks</span> על <span class='en'>Automatic</span>, סוג התרשים נגזר מסוג המשתנה: <b>רציף ← קו · בדיד ← עמודות</b>. זו אחת משתי הדרכים לשנות סוג תרשים (השנייה: ישירות דרך Marks)."
+    },
+    {
+      lvl:"mid",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי מסך ה-<b>Data Source</b>?",
+      o:["באזור ה-Connections מופיע שם הקובץ וסוגו",
+         "אזור עיצוב ה-Database הוא המקום שבו משלבים טבלאות",
+         "בתצוגה המקדימה רואים את כל ערכי הטבלה",
+         "שינוי נתונים כאן מעדכן אוטומטית את קובץ המקור",
+         "לחיצה על Sheet1 מעבירה לאזור בניית התרשימים"],
+      a:3,
+      why:"<b>הטענה השגויה: ד׳.</b> שינוי נתונים ב-<span class='en'>Tableau</span> <b>אינו משנה את קובץ המקור</b> — זה עקרון ההפרדה. כל שאר הטענות נכונות."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>מנהל רוצה תרשים שמציג מכירות (ציר אנכי) לפי רבעונים (ציר אופקי), עם קו נפרד לכל אזור מכירה.</span>מהו הצירוף ה<b>נכון</b> של גרירות?",
+      o:["רבעונים ל-Columns · מכירות ל-Rows · אזור ל-Marks (Color)",
+         "רבעונים ל-Rows · מכירות ל-Columns · אזור ל-Filters",
+         "מכירות ל-Columns · רבעונים ל-Marks · אזור ל-Rows",
+         "הכל ל-Marks",
+         "אזור ל-Columns · מכירות ל-Rows · רבעונים ל-Pages"],
+      a:0,
+      why:"אנכי (מכירות) ← <span class='en'>Rows</span> · אופקי (רבעונים) ← <span class='en'>Columns</span> · פילוח לקווים לפי אזור בצבע ← <span class='en'>Marks/Color</span>. כך מתקבלים כמה קווים באותו תרשים, אחד לכל אזור."
+    },
+    {
+      lvl:"mid",
+      q:"בעת חיבור קובץ <b>Excel עם מספר גיליונות</b> ל-Tableau, מסך ה-Data Source מופיע ריק. מה הסיבה וה<b>פתרון</b>?",
+      o:["הקובץ פגום — צריך לתקן אותו באקסל",
+         "התוכנה לא יודעת לאיזו טבלה להתייחס — גוררים לפחות טבלה אחת לאזור",
+         "צריך להמיר את הקובץ ל-CSV",
+         "חסר חיבור אינטרנט",
+         "צריך לרכוש את גרסת Desktop"],
+      a:1,
+      why:"עם כמה גיליונות התוכנה לא יודעת מאיפה להתחיל, ולכן המסך ריק. <b>הפתרון: לגרור לפחות טבלה אחת</b> לאזור העיצוב — מקובל להתחיל מהטבלה המרכזית/הגדולה."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות הבאות על <b>Columns ו-Rows</b> נכונות?<br>1 — Columns הוא ציר ה-X (אופקי).<br>2 — ערך שאמור להופיע על הציר האנכי נגרר ל-Rows.<br>3 — גרירת שדה נוסף ל-Rows יוצרת תמיד פילוח צבעוני.<br>4 — Rows הוא ציר ה-Y (אנכי).",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: גרירה ל-<span class='en'>Rows</span> יוצרת <b>תרשימים נוספים</b>, לא פילוח צבעוני. פילוח בצבע נעשה דרך <span class='en'>Marks ← Color</span>."
+    }
+  ],
+
+  "pages": [
+    {
+      lvl:"hard",
+      q:"מהי הטענה ה<b>נכונה ביותר</b> לגבי ההבדל בין <b>Pages</b> ל-<b>Filters</b>?",
+      o:["שניהם מסתירים נתונים לצמיתות",
+         "Pages מאפשר לדפדף בין ערכים על אותו תרשים, בעוד Filters מסנן ומשאיר רק את הערכים שנבחרו",
+         "Pages מסנן, ו-Filters מדפדף",
+         "אין ביניהם הבדל",
+         "שניהם יוצרים תרשימים נפרדים"],
+      a:1,
+      why:"<b>Pages</b> = דפדוף על <i>אותו</i> תרשים (עם חיצים). <b>Filters</b> = סינון שמשאיר רק את הנבחרים ומסתיר את השאר. שניהם שונים מ-<span class='en'>Rows/Columns</span> שיוצרים תרשימים נוספים."
+    },
+    {
+      lvl:"mid", noshuffle:true,
+      q:"כמה מהטענות על <b>Dashboard</b> נכונות?<br>1 — הוא מרכז תרשימים מ-Sheets שונים.<br>2 — הוא יכול לכלול תמונות וקישורים.<br>3 — משנים בו את סוג התרשים עצמו.<br>4 — מומלץ להגדיר Size ל-Automatic.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: את סוג התרשים משנים ב-<span class='en'>Sheet</span> עצמו, לא בדשבורד. הדשבורד מרכז ומציג — לא עורך תרשימים."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>אנליסט רוצה להציג רק את 5 המוצרים עם המכירות הנמוכות ביותר.</span>איזו טענה על השימוש ב-<b>Filter</b> נכונה?",
+      o:["צריך למחוק ידנית את שאר המוצרים מהקובץ",
+         "משתמשים ב-Filter עם כלל Bottom / 5 / לפי שדה המכירות",
+         "Filter לא מאפשר סינון לפי Top/Bottom",
+         "צריך לגרור את המוצרים ל-Pages",
+         "אפשר רק לסנן לפי טווח תאריכים"],
+      a:1,
+      why:"ה-<span class='en'>Filter</span> מאפשר כללים מתקדמים: <b>Bottom / 5 / By Field</b> על שדה המכירות יציג בדיוק את 5 הנמוכים. לא צריך לגעת בקובץ המקור."
+    }
+  ],
+
+  "github": [
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על תהליך הפרסום ב-<b>GitHub Pages</b> נכונות?<br>1 — קודם בונים ב-Tableau ואז שומרים ל-Public.<br>2 — הקובץ חייב להיקרא index.html.<br>3 — מפעילים דרך Settings ▸ Pages ▸ Branch (Main) ▸ Save.<br>4 — שמירת השינויים בקובץ נקראת Commit.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל ארבע הטענות","אף אחת"],
+      a:3,
+      why:"<b>כל הארבע נכונות.</b> זהו התהליך המלא: בונים ב-<span class='en'>Tableau</span> ← שומרים ל-<span class='en'>Public</span> ← קוד <span class='en'>HTML</span> ← <span class='en'>Repo</span> עם <code>index.html</code> ← <b>Commit</b> ← <span class='en'>Settings▸Pages▸Main▸Save</span>."
+    },
+    {
+      lvl:"mid",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי GitHub Pages?",
+      o:["הקובץ הראשי צריך להיקרא index.html",
+         "מפעילים את השירות דרך Settings ▸ Pages",
+         "פרסום הדשבורד מצריך קודם שמירה ל-Tableau Public",
+         "אחרי ההעלאה האתר עולה מיידית ללא שום הגדרה",
+         "שמירת שינויים בקובץ נקראת Commit"],
+      a:3,
+      why:"<b>השגויה: ד׳.</b> אחרי ההעלאה חובה <b>להפעיל את Pages</b> ב-<span class='en'>Settings ▸ Pages ▸ Branch (Main) ▸ Save</span>. זה לא אוטומטי."
+    }
+  ],
+
+  "gas": [
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>Frontend</b> ו-<b>Backend</b> (דוגמת הבנק) נכונות?<br>1 — אימות הסיסמה מול מסד הנתונים הוא Backend.<br>2 — הצגת גרף היתרה על המסך היא Frontend.<br>3 — הצפנת הנתונים היא Frontend.<br>4 — עיצוב הלוגו הוא Frontend.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: הצפנה מתרחשת <b>מאחורי הקלעים = Backend</b>. הכלל: מה שרואים על המסך = Frontend; מה שקורה עם הנתונים מאחור = Backend."
+    },
+    {
+      lvl:"hard",
+      q:"איזו מהטענות על <b>GAS</b> היא ה<b>נכונה ביותר</b>?",
+      o:["GAS הוא שרת פיזי מלא",
+         "GAS מדמה Backend על ידי הרצת קוד על שרתי גוגל וחשיפת URL ציבורי — אך אינו שרת בעצמו",
+         "GAS רץ בתוך הדפדפן של המשתמש",
+         "GAS מחייב התקנת שרת Apache",
+         "GAS מיועד רק לעיצוב Frontend"],
+      a:1,
+      why:"<b>GAS מדמה שרת אך איננו שרת.</b> הוא פורס קוד על שרתי גוגל וחושף <span class='en'>URL</span> (<span class='en'>Web App</span>) שמקבל בקשות. הקוד רץ על שרתי גוגל, לא במחשב המשתמש."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>יתרונות וחסרונות GAS</b> נכונות?<br>1 — GAS חינמי.<br>2 — GAS מתאים מצוין ליישומים בעומסים המוניים.<br>3 — GAS משתלב עם Google Sheets.<br>4 — GAS מוגבל לסביבת Google.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 3, 4).</b> טענה 2 <b>שגויה</b> והפוכה: GAS <b>מוגבל בעומסים</b> ו<b>פחות מתאים</b> ליישומים המוניים — זו אחת המגבלות המרכזיות שלו."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>מערכת שולפת מחיר מוצר ממקור ראשי; אם נכשל, ממקור גיבוי. עבור מוצר אחד — שני המקורות נכשלו.</span>איזו טענה על התנהגות המערכת נכונה?",
+      o:["המערכת כולה קורסת",
+         "השגיאה נתפסת ומטופלת ברמת הפריט הבודד, ושאר הפריטים ממשיכים לעבוד",
+         "כל הפריטים מקבלים ערך 0",
+         "המערכת פונה אוטומטית למקור שלישי לא מוגדר",
+         "המערכת מוחקת את המוצר מהמאגר"],
+      a:1,
+      why:"עקרון ה-<b>Fallback</b> + טיפול בשגיאות: כישלון של פריט בודד <b>לא מפיל את הבקשה כולה</b>. השגיאה נתפסת, מוחזרת הודעה לאותו פריט, והשאר ממשיך."
+    },
+    {
+      lvl:"mid",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי <b>API</b>?",
+      o:["API מחבר בין Frontend ל-Backend",
+         "API מגדיר איזה מידע ניתן לבקש ובאיזה פורמט",
+         "API הוא מסד הנתונים עצמו שמאחסן את המידע",
+         "אפשר להמשיל API להזמנה מתפריט במסעדה",
+         "API היא דרך מקובלת לחבר Frontend לנתונים"],
+      a:2,
+      why:"<b>השגויה: ג׳.</b> <span class='en'>API</span> הוא <b>ממשק</b> שמחבר ומגדיר בקשות — לא מסד הנתונים עצמו. האנלוגיה: מזמינים מהתפריט (API) בלי להיכנס למטבח (Backend)."
+    }
+  ],
+
+  "bi": [
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>Actionable Insights</b> נכונות?<br>1 — תובנה מניעת פעולה חייבת להיות ספציפית.<br>2 — היא חייבת להיות ברת-ביצוע.<br>3 — \"שיעור הנטישה עלה ל-12%\" הוא Actionable Insight מלא.<br>4 — היא חייבת להיות מבוססת ראיות.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4)</b> — שלושת המאפיינים. טענה 3 <b>שגויה</b>: \"הנטישה עלתה ל-12%\" הוא <b>מידע</b> בלבד — הוא מתאר מה קרה, בלי לומר מה לעשות. חסרות לו ברת-הביצוע והספציפיות."
+    },
+    {
+      lvl:"hard",
+      q:"איזו מהטענות על <b>OLTP ו-OLAP</b> היא ה<b>נכונה ביותר</b>?",
+      o:["OLTP הוא התשתית למערכות BI",
+         "OLAP עוסק בעסקאות מהירות בזמן אמת",
+         "OLAP הוא התשתית למערכות BI, ו-OLTP מאפיין מערכות תפעוליות כמו ERP",
+         "שניהם אותו דבר",
+         "OLTP מיועד לניתוח מגמות היסטוריות"],
+      a:2,
+      why:"<b>OLAP = תשתית ה-BI</b> (ניתוח מגמות, סריקת רשומות רבות). <b>OLTP = מערכות תפעוליות</b> (<span class='en'>ERP</span>, עסקאות מהירות בזמן אמת). שאר הטענות מבלבלות ביניהם."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>ETL ו-ELT</b> נכונות?<br>1 — ב-ETL העיבוד מתבצע לפני הטעינה למחסן.<br>2 — ELT מאפיין מחסנים מודרניים שמעבדים בעצמם.<br>3 — Snowflake הוא דוגמה למחסן ELT.<br>4 — שלב ה-Transform כולל ניקוי ואיחוד פורמטים.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל ארבע הטענות","אף אחת"],
+      a:3,
+      why:"<b>כל הארבע נכונות.</b> <b>ETL</b> = עיבוד לפני (קלאסי) · <b>ELT</b> = עיבוד בתוך המחסן (מודרני, כמו <span class='en'>Snowflake</span>) · <b>Transform</b> = ניקוי, איחוד פורמטים, ערכים חסרים."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>ארגון מאחסן נתוני מכירות מובנים, וגם תמונות, הקלטות ונתוני חיישנים לא-מובנים, ורוצה הכל במקום אחד.</span>איזו טענה נכונה?",
+      o:["Data Warehouse מתאים כי הוא מטפל בכל סוגי הנתונים",
+         "Data Lake בלבד, כי הוא מטפל רק בנתונים מובנים",
+         "Data Lakehouse מתאים — הוא משלב נתונים מובנים ולא-מובנים",
+         "Excel הוא הפתרון המתאים",
+         "ERP הוא הפתרון המתאים"],
+      a:2,
+      why:"<b>Lakehouse = שילוב.</b> <span class='en'>Warehouse</span> = מובנה בלבד · <span class='en'>Lake</span> = לא-מובנה בלבד · <b>Lakehouse</b> = שניהם. כאן יש גם מובנה וגם לא-מובנה → Lakehouse."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על ארכיטקטורת <b>BI</b> נכונות?<br>1 — מקורות הנתונים הם התחנה הראשונה.<br>2 — השכבה הסמנטית מתרגמת שמות טכניים לשפה עסקית.<br>3 — הדשבורד נמצא לפני מחסן הנתונים בשרשרת.<br>4 — ETL/ELT נמצא בין המקורות למחסן.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: הסדר הוא מקורות ← <span class='en'>ETL/ELT</span> ← מחסן ← שכבה סמנטית ← <b>דשבורד (אחרון)</b>. הדשבורד בא אחרי המחסן, לא לפניו."
+    },
+    {
+      lvl:"mid",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי <b>KPI</b>?",
+      o:["AOV = פדיון כולל חלקי מספר עסקאות",
+         "Churn Rate מודד שיעור נטישת לקוחות",
+         "KPI הוא מדד ביצוע עיקרי",
+         "AOV מודד את שביעות רצון העובדים",
+         "Churn Rate רלוונטי לחברות SaaS"],
+      a:3,
+      why:"<b>השגויה: ד׳.</b> <span class='en'>AOV</span> (<i>Average Order Value</i>) מודד <b>פדיון ממוצע לעסקה</b> בקמעונאות — לא שביעות רצון עובדים."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על מסמך <b>BRD</b> ומתודולוגיית <b>Top-Down</b> נכונות?<br>1 — BRD מתווך בין השפה העסקית לטכנית.<br>2 — ב-Top-Down מתחילים מהגדרת היעדים.<br>3 — \"יש לנו נתונים, בואו נבנה דשבורד\" היא גישה נכונה לפי Top-Down.<br>4 — מקורות הנתונים ב-BRD מוגדרים אחרי היעדים.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: זו גישת <b>Bottom-Up</b> שמובילה לדשבורדים חסרי תועלת. <span class='en'>Top-Down</span> מתחיל <b>מהיעד העסקי</b>, לא מהנתונים."
+    },
+    {
+      lvl:"hard",
+      q:"איזו מהטענות על <b>שכבה סמנטית</b> היא ה<b>נכונה ביותר</b>?",
+      o:["היא מצפינה את הנתונים",
+         "היא מתרגמת שמות טכניים (כמו tbl_trx_2024) לשפה עסקית (\"עסקאות 2024\")",
+         "היא שכבת האחסון הפיזי",
+         "היא כלי הוויזואליזציה",
+         "היא מנקה את הנתונים לפני הטעינה"],
+      a:1,
+      why:"<b>תרגום לשפה עסקית.</b> כמו תפריט במסעדה: המנהל רואה \"שניצל ביתי\" ולא <code>חומר גלם 4517-B</code>. השכבה הסמנטית הופכת שמות טכניים למובנים למקבלי החלטות."
+    },
+    {
+      lvl:"mid", noshuffle:true,
+      q:"כמה מהטענות על <b>DIKW</b> נכונות?<br>1 — הסדר הוא Data ← Information ← Knowledge ← Wisdom.<br>2 — \"1200\" בלי הקשר הוא Data.<br>3 — זיהוי תבנית הוא Wisdom.<br>4 — פעולה עסקית מבוססת נתונים היא Wisdom.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: זיהוי תבנית הוא <b>Knowledge</b>, לא <span class='en'>Wisdom</span>. <span class='en'>Wisdom</span> הוא שלב הפעולה (ה-<span class='en'>Actionable Insight</span>)."
+    },
+    {
+      lvl:"hard",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי ההבדל בין <b>Tableau</b> ל-<b>Power BI</b>?",
+      o:["Tableau הוא קרוס-פלטפורמה",
+         "Power BI עובד על Windows בלבד",
+         "Power BI משתלב היטב עם Microsoft Office",
+         "Tableau עובד רק על macOS",
+         "שניהם כלי BI מובילים"],
+      a:3,
+      why:"<b>השגויה: ד׳.</b> <span class='en'>Tableau</span> הוא <b>קרוס-פלטפורמה</b> — עובד על כל מערכות ההפעלה, לא רק <span class='en'>macOS</span>."
+    }
+  ],
+
+  "join": [
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>Left Join</b> נכונות?<br>1 — כל רשומות הטבלה השמאלית נשמרות.<br>2 — רשומות ללא התאמה בימין מקבלות Null.<br>3 — רשומות יתומות מהטבלה הימנית נשמרות גם הן.<br>4 — הטבלה הימנית היא \"האורחת\".",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: ב-<span class='en'>Left Join</span> יתומים מהטבלה <b>הימנית נזרקים</b> — רק השמאלית (\"בעלת הבית\") נשמרת במלואה."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>טבלת לקוחות: 200 רשומות. טבלת הזמנות: 50 רשומות, מתוכן 40 מקושרות ו-10 יתומות (לקוח מחוק).</span>בוצע <b>Left Join</b> (לקוחות משמאל). כמה שורות?",
+      o:["40","50","200","210","240"],
+      a:2,
+      why:"<b>200.</b> כל הלקוחות נשמרים (160 עם <span class='en'>Null</span>, 40 עם הזמנה). <b>10 ההזמנות היתומות נזרקות</b> — הן בטבלה הימנית ('אורחת'). לא 210 ולא 240."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>אותן טבלאות: 200 לקוחות, 50 הזמנות (40 מקושרות, 10 יתומות).</span>בוצע <b>Full Outer Join</b>. כמה שורות?",
+      o:["200","210","240","250","40"],
+      a:1,
+      why:"<b>210.</b> נוסחת Full Outer = התאמות + יתומים משני הצדדים. כאן: 40 התאמות + 160 לקוחות ללא הזמנה + 10 הזמנות יתומות = <b>210</b>."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות על <b>הכפלת שורות (One-to-Many)</b> נכונות?<br>1 — עובד עם רשומה אחת ו-3 רשומות צריכה יופיע ב-3 שורות אחרי Join.<br>2 — Sum על שכרו יספור אותו 3 פעמים.<br>3 — זו שגיאה שיש לתקן.<br>4 — ה-Join משכפל את פרטי העובד כדי לא לאבד נתונים.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: זו <b>לא שגיאה</b> אלא התנהגות תקינה של Join. אבל חשוב להיות מודעים — <span class='en'>Sum</span> יספור כפול."
+    },
+    {
+      lvl:"hard",
+      q:"איזו מהטענות על <b>Full Outer Join</b> היא ה<b>נכונה ביותר</b>?",
+      o:["מציג רק רשומות עם התאמה בשתי הטבלאות",
+         "מציג את כל הרשומות משתי הטבלאות, ומשלים בNull איפה שחסר",
+         "שקול ל-Inner Join",
+         "משמיט רשומות מהטבלה הימנית בלבד",
+         "מציג רק את הטבלה השמאלית"],
+      a:1,
+      why:"<b>Full Outer = הכל מהכל.</b> אף רשומה לא אובדת; איפה שאין התאמה מושלם <span class='en'>Null</span>. תיאור א׳ הוא Inner, תיאור ד׳ הוא Left."
+    },
+    {
+      lvl:"hard",
+      q:"<span class='scenario'>בטעות קושר שדה \"שם עובד\" לשדה \"מספר טלפון\". אף ערך לא תואם.</span>בוצע <b>Inner Join</b>. מה התוצאה?",
+      o:["טבלה עם כל העובדים ו-Null בטלפון",
+         "טבלה ריקה לחלוטין — 0 שורות",
+         "הודעת שגיאה",
+         "מכפלה קרטזית",
+         "כל השורות משוכפלות"],
+      a:1,
+      why:"<b>0 שורות.</b> <span class='en'>Inner Join</span> דורש התאמה מלאה. תנאי שקר (שם לעולם לא שווה מספר טלפון) → אפס התאמות → <b>קנבס ריק</b>. לא שגיאה ולא Null."
+    },
+    {
+      lvl:"mid",
+      q:"מהי הטענה ה<b>שגויה</b> לגבי <b>Join</b> ב-Tableau?",
+      o:["מטרתו לאחד טבלאות לטבלה אחת",
+         "הוא דורש שדה מזהה משותף",
+         "הוא מוגבל אך ורק לשדות טקסטואליים",
+         "הוא יוצר טבלה שטוחה ורחבה",
+         "אופן פעולתו דומה ל-SQL"],
+      a:2,
+      why:"<b>השגויה: ג׳.</b> <span class='en'>Join</span> <b>אינו מוגבל</b> לשדות טקסטואליים — אפשר לקשר לפי שדות מספריים, מזהים וכו׳. התנאי היחיד: שדה מזהה משותף."
+    },
+    {
+      lvl:"hard", noshuffle:true,
+      q:"כמה מהטענות הבאות נכונות?<br>1 — Inner Join על טבלאות עם 3 התאמות מחזיר 3 שורות.<br>2 — Right Join הפוך בסדר שקול ל-Left Join.<br>3 — ב-Outer Join רשומות מושמטות מתקיימות כערך ריק.<br>4 — Full Outer של אבי/בני/גדי + הזמנות (2 התאמות, יתום כל צד) מחזיר 4 שורות.",
+      o:["טענה אחת","שתי טענות","שלוש טענות","כל ארבע הטענות","אף אחת"],
+      a:2,
+      why:"<b>שלוש נכונות (1, 2, 4).</b> טענה 3 <b>שגויה</b>: ב-<span class='en'>Outer Join</span> רשומות מושמטות <b>לא מתקיימות כלל</b> — במקומן מופיע <span class='en'>Null</span> בשדות החסרים, אבל הרשומה עצמה נשמרת. הניסוח \"מושמטות מתקיימות\" הוא סתירה."
+    }
+  ]
+};
+
+// merge EXTRA into BANK by topic order (both share the same 6-topic sequence)
+(function mergeExtra(){
+  const order = ['tableau','pages','github','gas','bi','join'];
+  order.forEach((key, i) => {
+    if (BANK[i] && EXTRA[key]) BANK[i].qs = BANK[i].qs.concat(EXTRA[key]);
+  });
+})();
+const TC = ['t0','t1','t2','t3','t4','t5'];
+const KEYS = ['א','ב','ג','ד','ה'];
+
+/* ============ STUDY MODE ============ */
+const tabsEl=document.getElementById('tabs');
+const panelsEl=document.getElementById('panels');
+const scoreEl=document.getElementById('score');
+const barEl=document.getElementById('barfill');
+let sAns=0, sCor=0, sTot=0;
+BANK.forEach(t=>sTot+=t.qs.length);
+
+META.forEach((mt,ti)=>{
+  const [name,secIdx,blurb,wt]=mt;
+  const topic=BANK[ti];
+  const hue=TC[ti];
+
+  const tab=document.createElement('button');
+  tab.className='tab tc'+ti;
+  tab.type='button'; tab.setAttribute('role','tab');
+  tab.setAttribute('aria-selected', ti===0?'true':'false');
+  tab.innerHTML='<span class="dot"></span>'+name+' <span class="n">'+topic.qs.length+'</span>';
+  tab.addEventListener('click',()=>showTab(ti));
+  tabsEl.appendChild(tab);
+
+  const panel=document.createElement('div');
+  panel.className='panel tc'+ti;
+  panel.setAttribute('role','tabpanel');
+  if(ti!==0) panel.hidden=true;
+
+  const pa=document.createElement('div');
+  pa.className='part';
+  pa.innerHTML='<span class="lbl">חלק א׳ · סיכום</span><h2>'+name+'</h2>';
+  panel.appendChild(pa);
+  const line=document.createElement('p');
+  line.className='topline';
+  line.innerHTML=blurb+' · <b>במבחן: '+topic.weight+'</b>';
+  panel.appendChild(line);
+  const body=document.createElement('div');
+  body.innerHTML=THEORY[secIdx];
+  panel.appendChild(body);
+
+  const pb=document.createElement('div');
+  pb.className='part b';
+  pb.innerHTML='<span class="lbl">חלק ב׳ · מבחן</span><h2>שאלות תרגול — '+topic.qs.length+' שאלות</h2>';
+  panel.appendChild(pb);
+  const hint=document.createElement('p');
+  hint.className='topline';
+  hint.textContent='ענו בעצמכם, ואז לחצו על התשובה כדי לראות את הפתרון המלא.';
+  panel.appendChild(hint);
+
+  topic.qs.forEach((q,qi)=> panel.appendChild(buildCard(q,qi,'שאלה '+(qi+1),null,onStudyPick)));
+
+  const done=document.createElement('div');
+  done.className='done'; done.hidden=true;
+  done.innerHTML='<b>סיימת את כל השאלות בנושא הזה 🎉</b>';
+  panel.appendChild(done);
+  panelsEl.appendChild(panel);
+});
+
+function buildCard(q,qi,label,badge,onPick){
+  const card=document.createElement('div');
+  card.className='q';
+  const lvlTxt={easy:'קל',mid:'בינוני',hard:'מתקדם'}[q.lvl];
+  const top=document.createElement('div');
+  top.className='q-top';
+  let h='<span class="q-num">'+label+'</span><span class="lvl '+q.lvl+'">'+lvlTxt+'</span>';
+  if(badge) h+='<span class="q-badge"><span class="dot" style="background:var(--'+badge.hue+')"></span>'+badge.name+'</span>';
+  top.innerHTML=h;
+  card.appendChild(top);
+  const qt=document.createElement('p');
+  qt.className='q-text'; qt.innerHTML=q.q;
+  card.appendChild(qt);
+
+  // option order (may be shuffled): array of original indices
+  const order=q._order || q.o.map((_,i)=>i);
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  order.forEach((origIdx,pos)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='opt'; btn.type='button';
+    btn.innerHTML='<span class="k">'+KEYS[pos]+'</span><span>'+q.o[origIdx]+'</span>';
+    btn.addEventListener('click',()=>onPick(card,q,origIdx,order));
+    li.appendChild(btn); ul.appendChild(li);
+  });
+  card.appendChild(ul);
+  const why=document.createElement('div');
+  why.className='why'; why.hidden=true;
+  why.innerHTML='<span class="tag"></span><div>'+q.why+'</div>';
+  card.appendChild(why);
+  return card;
+}
+
+function markCard(card,q,chosenOrig,order){
+  card.dataset.done='1';
+  const btns=card.querySelectorAll('.opt');
+  order.forEach((origIdx,pos)=>{
+    const b=btns[pos];
+    b.disabled=true;
+    if(origIdx===q.a) b.classList.add(origIdx===chosenOrig?'correct':'reveal');
+    else if(origIdx===chosenOrig) b.classList.add('wrong');
+  });
+  const hit=chosenOrig===q.a;
+  const why=card.querySelector('.why');
+  const correctPos=order.indexOf(q.a);
+  why.hidden=false;
+  why.classList.toggle('miss',!hit);
+  why.querySelector('.tag').textContent = hit ? '✓ נכון' : '✗ לא נכון — התשובה היא '+KEYS[correctPos];
+  return hit;
+}
+
+function onStudyPick(card,q,chosenOrig,order){
+  if(card.dataset.done) return;
+  const hit=markCard(card,q,chosenOrig,order);
+  sAns++; if(hit) sCor++;
+  updateStudyScore();
+  const panel=card.closest('.panel');
+  if(panel.querySelectorAll('.q[data-done]').length===panel.querySelectorAll('.q').length)
+    panel.querySelector('.done').hidden=false;
+}
+function updateStudyScore(){
+  scoreEl.textContent=sCor+' / '+sAns;
+  scoreEl.classList.toggle('good',sAns>0 && sCor/sAns>=0.8);
+  barEl.style.width=(sAns/sTot*100)+'%';
+}
+function showTab(i){
+  Array.from(tabsEl.children).forEach((t,j)=>t.setAttribute('aria-selected',j===i?'true':'false'));
+  Array.from(panelsEl.children).forEach((p,j)=>{p.hidden=(j!==i);});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  panelsEl.querySelectorAll('.q').forEach(c=>{
+    delete c.dataset.done;
+    c.querySelectorAll('.opt').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong','reveal');});
+    const w=c.querySelector('.why'); w.hidden=true; w.classList.remove('miss');
+  });
+  panelsEl.querySelectorAll('.done').forEach(d=>d.hidden=true);
+  sAns=0; sCor=0; updateStudyScore();
+});
+updateStudyScore();
+
+/* ============ EXAM MODE ============ */
+const examEl=document.getElementById('exam');
+let exam=null, timerId=null;
+
+function shuffle(a){ // Fisher–Yates
+  const r=a.slice();
+  for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}
+  return r;
+}
+
+function buildExam(){
+  // draw weighted-random questions per topic, then shuffle question order,
+  // and shuffle each question's option order
+  let picked=[];
+  META.forEach((mt,ti)=>{
+    const wt=mt[3];
+    const pool=shuffle(BANK[ti].qs.map((q,qi)=>({q,ti,qi})));
+    picked=picked.concat(pool.slice(0,Math.min(wt,pool.length)));
+  });
+  picked=shuffle(picked);
+  // attach a fresh shuffled option order to each drawn question (clone!)
+  return picked.map(p=>{
+    const clone=Object.assign({},p.q);
+    const identity=p.q.o.map((_,i)=>i);
+    clone._order = p.q.noshuffle ? identity : shuffle(identity);
+    return {q:clone, ti:p.ti};
+  });
+}
+
+function startExam(){
+  exam={items:buildExam(),answers:[],idx:0,remaining:120*60};
+  renderExam();
+  clearInterval(timerId);
+  timerId=setInterval(tick,1000);
+}
+
+function tick(){
+  exam.remaining--;
+  const t=document.getElementById('timer');
+  if(t){
+    const m=Math.floor(exam.remaining/60), s=exam.remaining%60;
+    t.querySelector('b').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    t.classList.toggle('warn',exam.remaining<=300);
+  }
+  if(exam.remaining<=0){clearInterval(timerId);finishExam(true);}
+}
+
+function renderExam(){
+  examEl.innerHTML='';
+  const hud=document.createElement('div');
+  hud.className='exam-hud';
+  hud.innerHTML=
+    '<div class="timer" id="timer"><span class="lb">זמן שנותר</span><b>120:00</b></div>'+
+    '<div class="hud-prog"><span id="hudbar"></span></div>'+
+    '<div class="hud-count" id="hudcount">0 / '+exam.items.length+'</div>';
+  examEl.appendChild(hud);
+
+  const intro=document.createElement('p');
+  intro.className='topline';
+  intro.innerHTML='מבחן אקראי — <b>'+exam.items.length+' שאלות</b> מעורבבות, וגם סדר התשובות משתנה בכל פעם. בהצלחה!';
+  examEl.appendChild(intro);
+
+  exam.items.forEach((it,i)=>{
+    const badge={name:META[it.ti][0].split(' ')[0], hue:TC[it.ti]};
+    const card=buildCard(it.q,i,'שאלה '+(i+1),badge,onExamPick);
+    card.classList.add('tc'+it.ti);
+    examEl.appendChild(card);
+  });
+
+  const wrapBtn=document.createElement('div');
+  wrapBtn.style.textAlign='center';
+  wrapBtn.style.margin='1.6rem 0';
+  wrapBtn.innerHTML='<button class="btn" id="submitExam" type="button">סיים והצג ציון</button>';
+  examEl.appendChild(wrapBtn);
+  document.getElementById('submitExam').addEventListener('click',()=>finishExam(false));
+  updateHud();
+}
+
+function onExamPick(card,q,chosenOrig,order){
+  if(card.dataset.done) return;
+  markCard(card,q,chosenOrig,order);
+  exam.answers.push(chosenOrig===q.a);
+  updateHud();
+}
+function updateHud(){
+  const done=examEl.querySelectorAll('.q[data-done]').length;
+  const hb=document.getElementById('hudbar'), hc=document.getElementById('hudcount');
+  if(hb) hb.style.width=(done/exam.items.length*100)+'%';
+  if(hc) hc.textContent=done+' / '+exam.items.length;
+}
+
+function finishExam(timeUp){
+  clearInterval(timerId);
+  // score per topic
+  const perTopic={};
+  let correct=0;
+  exam.items.forEach((it)=>{
+    const card=examEl.querySelectorAll('.q')[exam.items.indexOf(it)];
+  });
+  // recompute cleanly from DOM state
+  let total=exam.items.length, got=0;
+  const byTopic={};
+  exam.items.forEach((it,i)=>{
+    const card=examEl.querySelectorAll('.q')[i];
+    const answered=card && card.dataset.done;
+    const wasRight=card && card.querySelector('.opt.correct');
+    byTopic[it.ti]=byTopic[it.ti]||{c:0,t:0};
+    byTopic[it.ti].t++;
+    if(wasRight){got++;byTopic[it.ti].c++;}
+  });
+  const pct=Math.round(got/total*100);
+  let rc='var(--flag)', verdict='כדאי לחזור על החומר ולנסות שוב.';
+  if(pct>=85){rc='var(--ok)';verdict='מצוין! אתה מוכן למבחן.';}
+  else if(pct>=70){rc='var(--t1)';verdict='טוב מאוד — עוד קצת חידוד ואתה שם.';}
+  else if(pct>=55){rc='var(--warn)';verdict='עברת, אבל יש מקום לשיפור.';}
+
+  clearInterval(timerId);
+  examEl.innerHTML='';
+  const res=document.createElement('div');
+  res.className='result';
+  let rows='';
+  META.forEach((mt,ti)=>{
+    if(!byTopic[ti]) return;
+    const b=byTopic[ti];
+    rows+='<div class="brow"><span class="dot" style="background:var(--'+TC[ti]+')"></span>'+
+      '<span class="nm">'+mt[0]+'</span><span class="sc">'+b.c+' / '+b.t+'</span></div>';
+  });
+  res.innerHTML=
+    '<div class="ring" style="--v:'+pct+';--rc:'+rc+'"><b>'+pct+'%<small>'+got+' / '+total+'</small></b></div>'+
+    '<h2>'+(timeUp?'הזמן נגמר':'סיימת את המבחן')+'</h2>'+
+    '<p class="verdict">'+verdict+'</p>'+
+    '<div class="breakdown">'+rows+'</div>'+
+    '<button class="btn" id="retry" type="button">מבחן חדש</button>'+
+    '<button class="btn sm" id="toStudy" type="button" style="background:var(--panel2);color:var(--ink);box-shadow:none;border:1px solid var(--line2)">חזרה ללימוד</button>';
+  examEl.appendChild(res);
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('retry').addEventListener('click',startExam);
+  document.getElementById('toStudy').addEventListener('click',()=>setMode('study'));
+}
+
+/* ============ MODE SWITCH ============ */
+const mStudy=document.getElementById('mStudy'), mExam=document.getElementById('mExam');
+const studyWrap=document.getElementById('study');
+const pbarWrap=document.getElementById('pbarWrap');
+const resetBtn=document.getElementById('reset');
+
+function setMode(mode){
+  const isStudy=mode==='study';
+  mStudy.setAttribute('aria-pressed',isStudy);
+  mExam.setAttribute('aria-pressed',!isStudy);
+  studyWrap.hidden=!isStudy;
+  examEl.hidden=isStudy;
+  // study score UI only in study mode
+  scoreEl.hidden=!isStudy; pbarWrap.hidden=!isStudy; resetBtn.hidden=!isStudy;
+  if(isStudy){ clearInterval(timerId); }
+  else if(!exam){ showExamStart(); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showExamStart(){
+  examEl.innerHTML='';
+  const s=document.createElement('div');
+  s.className='exam-start';
+  let leg='';
+  META.forEach((mt,ti)=> leg+='<span><span class="dot" style="background:var(--'+TC[ti]+')"></span>'+mt[0]+' ×'+mt[3]+'</span>');
+  s.innerHTML=
+    '<h2>מבחן מלא — 20 שאלות</h2>'+
+    '<p>שאלות נבחרות באקראי לפי המשקל האמיתי במבחן. בכל ניסיון — <b style="color:var(--ink)">שאלות אחרות וסדר תשובות אחר</b>, כדי שתתרגל את החומר ולא את המיקום.</p>'+
+    '<div class="exam-legend">'+leg+'</div>'+
+    '<p style="font-size:.85rem;color:var(--drop)">טיימר: שעתיים · 5 נק׳ לשאלה · לחיצה על תשובה חושפת את הפתרון מיד</p>'+
+    '<button class="btn" id="beginExam" type="button">התחל מבחן</button>';
+  examEl.appendChild(s);
+  document.getElementById('beginExam').addEventListener('click',startExam);
+}
+mStudy.addEventListener('click',()=>setMode('study'));
+mExam.addEventListener('click',()=>setMode('exam'));
+</script>
+</body>
+</html>
